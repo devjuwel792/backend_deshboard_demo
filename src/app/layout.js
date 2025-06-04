@@ -1,6 +1,9 @@
 import SubLayout from "@/Layout/SubLayout";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Sidebar from "@/Components/common/Sidebar/Sidebar";
+// import Footer from "@/Components/common/Footer/Footer";
+// import Navbar from "@/Components/common/Navbar/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,9 +27,10 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SubLayout>
-          {children}
+          <Sidebar>
+            {children}
+          </Sidebar>
         </SubLayout>
-
       </body>
     </html>
   );
