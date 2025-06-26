@@ -1,3 +1,4 @@
+'use client'
 import * as React from "react";
 import { Avatar, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
@@ -156,7 +157,7 @@ const MaterialTable = () => {
     ];
 
     return (
-        <div className="p-4 shadow mt-4">
+        <div className="shadow mt-4">
             <MaterialReactTable
                 columns={columns}
                 data={record?.data || []}
