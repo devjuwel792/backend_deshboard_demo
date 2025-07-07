@@ -1,14 +1,16 @@
 'use client'
-import { useState } from 'react';
+import { menu } from '@/Utils/Sidebar';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
 import SubmenuSidebarItem from '../SidebarSubMenu/SubmenuSidebarItem';
-import { menu } from '@/Utils/Sidebar';
 // import SubmenuSidebarItem from '../SubmenuSidebar/SubmenuSidebarItem';
 // import { menu } from '@/data/Sidebar';
 
 const Sidebar = ({ children }) => {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
     const actualWidth = isOpen || isHovered;
@@ -20,7 +22,18 @@ const Sidebar = ({ children }) => {
         : "lg:pl-[80px] xl:pl-[100px]";
 
     const toggleSidebar = () => setIsOpen(!isOpen);
-
+    useEffect(() => {
+        (async () => {
+            // let result = await getCategories({ pageSize: 10, pageindex: 0, searchText: '' }, router);
+            // const result = await createCategory({
+            //     name: "category10",
+            //     description: "string",
+            //     isActive: true
+            // }, router);
+            // console.log("🚀 ~ result:", result)
+        })()
+    }
+    )
     return (
         <>
             <div className="h-screen z-10">
@@ -67,11 +80,17 @@ const Sidebar = ({ children }) => {
             </div>
 
             <div className={`${sidebarPosition} w-full duration-500 transition-all`}>
-                <Navbar toggleSidebar={toggleSidebar} />
-                <div className="overflow-scroll dark:bg-background bg-lightBg">
-                    {children}
-                    <Footer />
+                <div className='flex flex-col justify-between min-h-[calc(100vh-64px)]'>
+                    <div>
+                        <Navbar toggleSidebar={toggleSidebar} />
+                        <div className="overflow-scroll dark:bg-background bg-lightBg p-[30px]">
+                            {children}
+                        </div>
+                    </div>
+
                 </div>
+
+                <Footer />
             </div>
         </>
     );
