@@ -29,4 +29,196 @@
     --color-gradientBlackLight: var(--gradient-black-light);
     --color-gradientBlackDark: var(--gradient-black-dark);
   }
+
+  /* Styles */
+  --toastify-toast-bd-radius: 0px;
+
+  --webkit-scrollbar {
+    display: none;
+  }
+
+  .MuiFormLabel-root {
+    @apply text-gray-500 dark:text-white;
+  }
+
+  .Mui-focused {
+    color: #ed8a51 !important;
+  }
+
+  .MuiFormControl-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    @apply dark:border-gray-700 border-gray-200;
+    /* default */
+  }
+
+  .MuiFormControl-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    @apply dark:border-gray-700 border-gray-200;
+    /* on hover */
+  }
+
+  .MuiFormControl-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    @apply dark:border-gray-600 border-gray-300;
+    /* on focus */
+  }
+
+  .css-28116y-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
+    @apply p-0;
+  }
+
+  .css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root {
+    @apply top-[-6px]
+  }
+
+  .css-1hoqul-MuiPaper-root {
+    @apply dark:bg-[#1d2229];
+  }
+
+  .MuiPaper-rounded {
+    @apply border-0;
+  }
+
+  /* ********************** react-toastify  START *************************** */
+
+
+  .Toastify__toast--success {
+    @apply bg-[#0d462c] text-white h-[3px];
+  }
+
+  .Toastify__toast--error {
+    @apply bg-[#bc1929] h-[3px] text-white;
+  }
+
+  .Toastify__toast--warning {
+    @apply bg-[#856404] h-[3px];
+  }
+
+  .Toastify__toast--info {
+    @apply bg-[#0c5460] text-white h-[3px];
+  }
+
+  /* ********************** react-hot-toast  START *************************** */
+  .rdrCalendarWrapper .rdrDateRangePickerWrapper {
+    @apply w-full
+  }
+
+  .rdrCalendarWrapper .rdrDateDisplay {
+    @apply m-4;
+  }
+
+  .rdrCalendarWrapper .rdrDateDisplayWrapper {
+    @apply relative;
+  }
+
+  .rdrCalendarWrapper .rdrDateDisplayWrapper::before {
+    content: "";
+    @apply absolute top-0 left-0 w-full h-full dark:bg-[#0c161f] border-b border-[#eff2f7];
+  }
+
+  .rdrMonthsHorizontal {
+    @apply dark:bg-[#0c161f];
+  }
+
+  .dark .rdrCalendarWrapper .rdrDateDisplayWrapper::before {
+    @apply border-[#404040];
+  }
+
+  .rdrCalendarWrapper .rdrDateDisplayWrapper .rdrDateDisplay {
+    color: var(--theme-color) !important;
+  }
+
+  .rdrCalendarWrapper select {
+    @apply rounded-none bg-primary border border-[#eee] text-left text-[14px] font-medium;
+  }
+
+  .rdrCalendarWrapper .rdrSelected,
+  .rdrCalendarWrapper .rdrInRange,
+  .rdrCalendarWrapper .rdrStartEdge,
+  .rdrCalendarWrapper .rdrEndEdge {
+    color: var(--theme-color) !important;
+  }
+
+  .rdrCalendarWrapper .rdrStartEdge,
+  .rdrCalendarWrapper .rdrEndEdge {
+    @apply rounded-none;
+  }
+
+  .rdrCalendarWrapper .rdrInRange {
+    background: #ed8a519a;
+  }
+
+  .dark .rdrCalendarWrapper .rdrInRange {
+    @apply bg-[#1c2128];
+  }
+
+  .rdrCalendarWrapper .rdrDayStartOfMonth .rdrInRange {
+    background: var(--theme-color);
+  }
+
+  .rdrCalendarWrapper .rdrNextPrevButton {
+    @apply bg-[#f9f9f6];
+  }
+
+  .rdrCalendarWrapper .rdrDay>span:first-child {
+    color: var(--theme-color) !important;
+  }
+
+  .rdrCalendarWrapper .rdrDayToday .rdrDayNumber span::after {
+    background-color: var(--theme-color);
+  }
+
+  /* END */
+
+
+  /* *****************Table START******************** */
+  .css-1hoqul-MuiPaper-root {
+    border-radius: 0 !important;
+  }
+
+  .px-2 .MuiPaper-elevation>.MuiBox-root {
+    @apply dark:bg-[#1d2229];
+  }
+
+  .MuiTable-root .MuiTableHead-root .css-1mpnnre-MuiTableRow-root {
+    background-color: #303030;
+  }
+
+  /* Mui box root */
+  .MuiTableHead-root .MuiTableCell-head>.MuiBox-root {
+    @apply dark:text-[#ecf0f1];
+  }
+
+  /* Mui icon root */
+  .MuiTableHead-root .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root .MuiSvgIcon-root {
+    @apply dark:text-[#ecf0f1];
+  }
+
+  /* Table body row  light*/
+  /* .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
+  background-color: #ffffff !important;
+} */
+  /* Table body row  dark*/
+  .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
+    background-color: #1d2229 !important;
+  }
+
+
+  /* *****************Table End******************** */
+
+
+
+  /* *****************Scroll Bars******************** */
+
+  * {
+    scrollbar-width: none;
+    /* Hide both vertical and horizontal scrollbars */
+  }
+
+  /* Hide horizontal scrollbar in Firefox */
+  html {
+    overflow-x: hidden;
+    /* Prevents horizontal scrolling */
+  }
+
+  .dark {
+    --dark-background: #0b131c;
+  }
 }
