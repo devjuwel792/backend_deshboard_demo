@@ -1,26 +1,16 @@
 import {
-    BadgePercent,
     Bell,
-    BookOpen,
-    CalendarDays,
-    ClipboardList,
-    FileText,
     HelpCircle,
-    Home,
-    Image,
     LayoutDashboard,
     LogOut,
-    Mail, Megaphone,
+    Megaphone,
     Package,
     PackagePlus,
     Repeat,
     Settings,
     Star,
     Store,
-    Ticket,
-    Truck,
-    Users,
-    Wallet
+    Users
 } from "lucide-react";
 
 export const menu = [
@@ -31,173 +21,55 @@ export const menu = [
     },
     {
         icon: <PackagePlus size={16} />,
-        label: "Products",
-        href: "/products",
-        children: [
-            {
-                icon: <PackagePlus size={16} />,
-                label: "Add Product",
-                href: "/products/add-product"
-            },
-            {
-                icon: <Package size={16} />,
-                label: "All Product",
-                href: "/products/product-list"
-            },
-            {
-                icon: <Package size={16} />,
-                label: "Product Categories",
-                href: "/products/product-categories"
-            },
-            // {
-            //     icon: <Package size={16} />,
-            //     label: "Product Tags",
-            //     href: "/products/product-tags"
-            // }
-        ]
+        label: "Add Product",
+        href: "/add-product",
     },
     {
         icon: <Megaphone size={16} />,
-        label: "Announcements",
-        href: "/announcements",
-        children: [
-            {
-                icon: <Users size={16} />,
-                label: "User Announcements",
-                href: "/user-announcements"
-            },
-            {
-                icon: <Store size={16} />,
-                label: "Store Announcements",
-                href: "/store-announcements"
-            },
-            {
-                icon: <FileText size={16} />,
-                label: "Page Announcements",
-                href: "/page-announcements"
-            },
-            {
-                icon: <FileText size={16} />,
-                label: "Announcement Archive",
-                href: "/announcement-archive"
-            }
-        ]
+        label: "Category",
+        href: "/category",
     },
     {
         icon: <Users size={16} />,
-        label: "Users",
-        href: "/users"
-    },
-    {
-        icon: <Package size={16} />,
-        label: "Store Management",
-        href: "/store-management",
+        label: "Orders",
+        href: "/orders",
         children: [
-            {
-                icon: <Package size={16} />,
-                label: "Products",
-                href: "/products"
-            },
             {
                 icon: <Store size={16} />,
-                label: "Stores",
-                href: "/stores"
+                label: "All Orders",
+                href: "/orders/all-orders"
             },
             {
-                icon: <ClipboardList size={16} />,
-                label: "Orders",
-                href: "/orders"
-            },
-            {
-                icon: <Truck size={16} />,
-                label: "Shipping",
-                href: "/shipping"
-            }
-        ]
-    },
-    {
-        icon: <BookOpen size={16} />,
-        label: "Content",
-        href: "/content",
-        children: [
-            {
-                icon: <Image size={16} />,
-                label: "Media",
-                href: "/media"
-            },
-            {
-                icon: <BookOpen size={16} />,
-                label: "Blogs",
-                href: "/blogs"
-            },
-            {
-                icon: <FileText size={16} />,
-                label: "Pages",
-                href: "/pages"
-            }
-        ]
-    },
-    {
-        icon: <Wallet size={16} />,
-        label: "Finance",
-        href: "/finance",
-        children: [
-            {
-                icon: <BadgePercent size={16} />,
-                label: "Taxes",
-                href: "/taxes"
-            },
-            {
-                icon: <Ticket size={16} />,
-                label: "Coupons",
-                href: "/coupons"
-            },
-            {
-                icon: <CalendarDays size={16} />,
-                label: "Currencies",
-                href: "/currencies"
-            },
-            {
-                icon: <Mail size={16} />,
-                label: "Points",
-                href: "/points"
-            },
-            {
-                icon: <Wallet size={16} />,
-                label: "Wallets",
-                href: "/wallets"
-            },
-            {
-                icon: <Repeat size={16} />,
-                label: "Refunds",
-                href: "/refund"
+                icon: <Users size={16} />,
+                label: "Order Item",
+                href: "/orders/order-item"
             }
         ]
     },
     {
         icon: <Star size={16} />,
         label: "Reviews",
-        href: "/reviews"
+        href: "/review"
     },
     {
         icon: <HelpCircle size={16} />,
-        label: "FAQs",
-        href: "/faqs"
+        label: "Users",
+        href: "/users"
     },
     {
         icon: <Bell size={16} />,
-        label: "Notifications",
-        href: "/notice"
+        label: "Cart",
+        href: "/cart"
     },
     {
         icon: <Repeat size={16} />,
-        label: "Subscriptions",
-        href: "/subscriptions"
+        label: "Address",
+        href: "/address"
     },
     {
-        icon: <Home size={16} />,
-        label: "Store Front",
-        href: "/store-front"
+        icon: <Repeat size={16} />,
+        label: "Payment",
+        href: "/payment"
     },
     {
         icon: <Settings size={16} />,

@@ -1,28 +1,41 @@
-'use client'
 import Title from '@/Components/common/Title/Title';
 import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
-import { Grid, TextField, Box, Paper, Autocomplete } from '@mui/material';
-import React, { useState } from 'react';
-
-const categories = [
-    { id: 1, label: 'Electronics' },
-    { id: 2, label: 'Books' },
-    { id: 3, label: 'Home & Kitchen' },
-    { id: 4, label: 'Fashion' },
-];
+import { Grid, TextField, Box, Paper } from '@mui/material';
+import React from 'react';
 
 const page = () => {
-
-    const [selectedCategory, setSelectedCategory] = useState(null);
-
     return (
         <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Add Product" />
-            <Grid container spacing={{ xs: 3, md: 3 }}>
+            <Title title="Payment" />
+            <Grid container spacing={{ xs: 2, md: 3 }}>
                 <Grid item xs={12} md={6}>
                     <TextField
                         autoFocus
-                        label="Name"
+                        label="Payment Method"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        autoFocus
+                        type="date"
+                        label="Payment Date"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputLabelProps={{ shrink: true }}
+                        InputProps={{ sx: { borderRadius: 0 } }}
+                    />
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Status"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -34,7 +47,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Price"
+                        label="Order Id"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -43,10 +56,9 @@ const page = () => {
                         }}
                     />
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Stock"
+                        label="Order"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -55,59 +67,6 @@ const page = () => {
                         }}
                     />
                 </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Description"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Image URL"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <Box sx={{ width: '100%' }}>
-                        <Autocomplete
-                            options={categories}
-                            getOptionLabel={(option) => option.label}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                            value={selectedCategory}
-                            onChange={(_, value) => setSelectedCategory(value)}
-                            fullWidth
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Category"
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        sx: { borderRadius: 0 },
-                                    }}
-                                />
-                            )}
-                        />
-                    </Box>
-                </Grid>
-
-
-
             </Grid>
 
             {/* Table Below */}

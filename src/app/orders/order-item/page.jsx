@@ -13,16 +13,27 @@ const categories = [
 
 const page = () => {
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const[selectedCategory, setSelectedCategory] = useState(null);
 
     return (
         <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Add Product" />
-            <Grid container spacing={{ xs: 3, md: 3 }}>
+            <Title title="Order Item" />
+            <Grid container spacing={{ xs: 2, md: 3 }}>
                 <Grid item xs={12} md={6}>
                     <TextField
                         autoFocus
-                        label="Name"
+                        label="Order Id"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Order"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -32,53 +43,6 @@ const page = () => {
                     />
                 </Grid>
 
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Price"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Stock"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Description"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Image URL"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
 
                 <Grid item xs={12} md={6}>
                     <Box sx={{ width: '100%' }}>
@@ -106,8 +70,28 @@ const page = () => {
                     </Box>
                 </Grid>
 
-
-
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Quantity"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Price"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid>
             </Grid>
 
             {/* Table Below */}

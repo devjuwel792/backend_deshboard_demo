@@ -4,7 +4,7 @@ import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
 import { Grid, TextField, Box, Paper, Autocomplete } from '@mui/material';
 import React, { useState } from 'react';
 
-const categories = [
+const cart = [
     { id: 1, label: 'Electronics' },
     { id: 2, label: 'Books' },
     { id: 3, label: 'Home & Kitchen' },
@@ -13,16 +13,16 @@ const categories = [
 
 const page = () => {
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCart, setSelectedCart] = useState(null);
+
 
     return (
         <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Add Product" />
-            <Grid container spacing={{ xs: 3, md: 3 }}>
+            <Title title="Cart" />
+            <Grid container spacing={{ xs: 2, md: 3 }}>
                 <Grid item xs={12} md={6}>
                     <TextField
-                        autoFocus
-                        label="Name"
+                        label="User"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -34,7 +34,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Price"
+                        label="Product Id"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -46,7 +46,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Stock"
+                        label="Product"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -55,10 +55,9 @@ const page = () => {
                         }}
                     />
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Description"
+                        label="Quantity"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -67,32 +66,20 @@ const page = () => {
                         }}
                     />
                 </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Image URL"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
+{/* 
                 <Grid item xs={12} md={6}>
                     <Box sx={{ width: '100%' }}>
                         <Autocomplete
-                            options={categories}
+                            options={cart}
                             getOptionLabel={(option) => option.label}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
-                            value={selectedCategory}
-                            onChange={(_, value) => setSelectedCategory(value)}
+                            value={selectedCart}
+                            onChange={(_, value) => setSelectedCart(value)}
                             fullWidth
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Category"
+                                    label="Product Category" //Id will pass
                                     variant="outlined"
                                     size="small"
                                     fullWidth
@@ -104,9 +91,7 @@ const page = () => {
                             )}
                         />
                     </Box>
-                </Grid>
-
-
+                </Grid> */}
 
             </Grid>
 
