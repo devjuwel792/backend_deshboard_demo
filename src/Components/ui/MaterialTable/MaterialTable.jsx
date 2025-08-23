@@ -1,99 +1,68 @@
 'use client'
-import * as React from "react";
-import { Avatar, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
+import * as React from "react";
 import { CiEdit, CiMenuKebab } from 'react-icons/ci';
 import { RiDeleteBin5Line } from "react-icons/ri";
-import Badge from "../Badge/Badge";
-import ActiveBadge from "../Badge/ActiveBadge";
-import { Switch } from "../Switch/Switch";
 
-const MaterialTable = () => {
-
-    const dummyData = [
-        {
-            id: '1',
-            image: 'https://via.placeholder.com/40',
-            name: 'John Doe',
-            description: 'Sample user data',
-            isActive: true,
-        },
-        {
-            id: '2',
-            image: 'https://via.placeholder.com/40',
-            name: 'Jane Smith',
-            description: 'Placeholder info',
-            isActive: false,
-        },
-        {
-            id: '3',
-            image: 'https://via.placeholder.com/40',
-            name: 'Alice Johnson',
-            description: 'Another example user',
-            isActive: true,
-        },
-    ];
-
+const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDelete, onUpdate, title }) => {
     // Default table state
-    const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 3 });
-    const isLoading = false;
+    const [pagination, setPagination] = React.useState({ pageIndex: data?.pageIndex, pageSize: data?.pageSize || 10 });
+    // State to hold search text
+    const [searchText, setSearchText] = React.useState('');
+    // State to hold the record data
+    React.useEffect(() => {
+        onPagination && onPagination(pagination);
+    }, [pagination]);
+    // State to handle search text changes
+    React.useEffect(() => {
+        onSearch && onSearch(searchText);
+    }, [searchText]);
 
-    const record = {
-        data: dummyData,
-        total: dummyData.length,
-    };
 
-    const handleDelete = () => {
-    };
+    const newColumns = [
+        ...(Array.isArray(columns) ? columns : []),
+        // {
+        //     accessorKey: 'image',
+        //     header: 'Image',
+        //     enableColumnFilter: false,
+        //     enableColumnOrdering: false,
+        //     enableSorting: false,
+        //     enableGlobalFilter: false,
+        //     Cell: ({ row }) => (
+        //         <Avatar
+        //             alt="User Image"
+        //             src={row.original.image}
+        //             sx={{
+        //                 width: 40,
+        //                 height: 40,
+        //                 borderRadius: 50,
+        //                 objectFit: 'cover',
+        //             }}
+        //         />
+        //     ),
+        // },
 
-    const handelCreate = () => {
-    };
-
-    const handleUpdate = () => {
-    };
-
-    const columns = [
-        {
-            accessorKey: 'image',
-            header: 'Image',
-            enableColumnFilter: false,
-            enableColumnOrdering: false,
-            enableSorting: false,
-            enableGlobalFilter: false,
-            Cell: ({ row }) => (
-                <Avatar
-                    alt="User Image"
-                    src={row.original.image}
-                    sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 50,
-                        objectFit: 'cover',
-                    }}
-                />
-            ),
-        },
-        { accessorKey: 'name', header: 'Name' },
-        { accessorKey: 'description', header: 'Description' },
-        {
-            accessorKey: 'isActive',
-            header: 'Status',
-            Cell: ({ row }) => {
-                const isActive = row.original.isActive;
-                return (
-                    <div>
-                        {isActive ? <Badge /> : <ActiveBadge title={
-                            "In Stock"
-                        } />}
-                    </div>
-                );
-            },
-        },
-        {
-            accessorKey: 'status',
-            header: 'Status',
-            cell: ({ row }) => <Switch />
-        },
+        // { accessorKey: 'description', header: 'Description' },
+        // {
+        //     accessorKey: 'isActive',
+        //     header: 'Status',
+        //     Cell: ({ row }) => {
+        //         const isActive = row.original.isActive;
+        //         return (
+        //             <div>
+        //                 {isActive ? <Badge /> : <ActiveBadge title={
+        //                     "In Stock"
+        //                 } />}
+        //             </div>
+        //         );
+        //     },
+        // },
+        // {
+        //     accessorKey: 'status',
+        //     header: 'Status',
+        //     cell: ({ row }) => <Switch />
+        // },
         {
             accessorKey: 'Action',
             header: 'Action',
@@ -131,7 +100,7 @@ const MaterialTable = () => {
                         >
                             <MenuItem
                                 onClick={() => {
-                                    handleUpdate(row.original.id);
+                                    onUpdate(row.original);
                                     handleMenuClose();
                                 }}
                             >
@@ -141,7 +110,8 @@ const MaterialTable = () => {
                             </MenuItem>
                             <MenuItem
                                 onClick={() => {
-                                    handleDelete(row.original.id);
+                                    console.log("🚀 ~ MaterialTable ~ newColumns:", newColumns)
+                                    onDelete && onDelete(row.original.id);
                                     handleMenuClose();
                                 }}
                             >
@@ -156,11 +126,14 @@ const MaterialTable = () => {
         }
     ];
 
+
+    console.log("🚀 ~ searchText:", searchText)
+
     return (
         <div className="shadow mt-4">
             <MaterialReactTable
-                columns={columns}
-                data={record?.data || []}
+                columns={newColumns}
+                data={data?.data || []}
                 enableRowSelection={true}
                 enableColumnOrdering={true}
                 enableRowNumbers={true}
@@ -171,7 +144,7 @@ const MaterialTable = () => {
                 initialState={{ showColumnFilters: false }}
                 positionToolbarAlertBanner='bottom'
                 muiPaginationProps={{
-                    rowsPerPageOptions: [3, 10, 15],
+                    rowsPerPageOptions: [5, 10, 15, 20],
                     variant: 'outlined',
                 }}
                 muiTablePaperProps={{
@@ -179,13 +152,15 @@ const MaterialTable = () => {
                     className: 'shadow-none',
                 }}
                 paginationDisplayMode="pages"
-                rowCount={record?.total}
+                rowCount={data?.total}
                 onPaginationChange={setPagination}
                 manualPagination
                 state={{
                     pagination,
-                    isLoading: isLoading
+                    isLoading: isLoading,
+                    globalFilter: searchText, // Pass search text to table
                 }}
+                onGlobalFilterChange={setSearchText} // Listen for search changes
                 renderTopToolbarCustomActions={() => (
                     <div
                         style={{
@@ -197,10 +172,10 @@ const MaterialTable = () => {
                     >
                         <div>
                             <h2 className="mb-[20px]" style={{ fontSize: '30px' }}>
-                                Material Table
+                                {title}
                             </h2>
                             <Button
-                                onClick={handelCreate}
+
                                 style={{
                                     padding: '5px 10px',
                                     color: '#fff',

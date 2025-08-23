@@ -14,8 +14,6 @@
   --gradient-black-dark: #0b141d;
   --theme-color: #ed8a51;
 
-
-
   @theme {
     --color-primary: var(--primary);
     --color-secondary-orange: var(--secondary-orange);
@@ -50,22 +48,28 @@
     /* default */
   }
 
-  .MuiFormControl-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  .MuiFormControl-root
+    .MuiOutlinedInput-root:hover
+    .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-700 border-gray-200;
     /* on hover */
   }
 
-  .MuiFormControl-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  .MuiFormControl-root
+    .MuiOutlinedInput-root.Mui-focused
+    .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-600 border-gray-300;
     /* on focus */
   }
 
-  .css-28116y-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
+  .css-28116y-MuiAutocomplete-root
+    .MuiOutlinedInput-root
+    .MuiAutocomplete-input {
     @apply p-0;
   }
 
   .css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root {
-    @apply top-[-6px]
+    @apply top-[-6px];
   }
 
   .css-1hoqul-MuiPaper-root {
@@ -77,7 +81,6 @@
   }
 
   /* ********************** react-toastify  START *************************** */
-
 
   .Toastify__toast--success {
     @apply bg-[#0d462c] text-white h-[3px];
@@ -97,7 +100,7 @@
 
   /* ********************** react-hot-toast  START *************************** */
   .rdrCalendarWrapper .rdrDateRangePickerWrapper {
-    @apply w-full
+    @apply w-full;
   }
 
   .rdrCalendarWrapper .rdrDateDisplay {
@@ -157,7 +160,7 @@
     @apply bg-[#f9f9f6];
   }
 
-  .rdrCalendarWrapper .rdrDay>span:first-child {
+  .rdrCalendarWrapper .rdrDay > span:first-child {
     color: var(--theme-color) !important;
   }
 
@@ -167,27 +170,28 @@
 
   /* END */
 
-
   /* *****************Table START******************** */
   .css-1hoqul-MuiPaper-root {
     border-radius: 0 !important;
   }
 
-  .px-2 .MuiPaper-elevation>.MuiBox-root {
+  .px-2 .MuiPaper-elevation > .MuiBox-root {
     @apply dark:bg-[#1d2229];
   }
 
   .MuiTable-root .MuiTableHead-root .css-1mpnnre-MuiTableRow-root {
-    background-color: #303030;
+    /* background-color: #303030; */
   }
 
   /* Mui box root */
-  .MuiTableHead-root .MuiTableCell-head>.MuiBox-root {
+  .MuiTableHead-root .MuiTableCell-head > .MuiBox-root {
     @apply dark:text-[#ecf0f1];
   }
 
   /* Mui icon root */
-  .MuiTableHead-root .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root .MuiSvgIcon-root {
+  .MuiTableHead-root
+    .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root
+    .MuiSvgIcon-root {
     @apply dark:text-[#ecf0f1];
   }
 
@@ -197,13 +201,10 @@
 } */
   /* Table body row  dark*/
   .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
-    background-color: #1d2229 !important;
+    /* background-color: #1d2229 !important; */
   }
 
-
   /* *****************Table End******************** */
-
-
 
   /* *****************Scroll Bars******************** */
 
