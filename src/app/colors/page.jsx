@@ -3,16 +3,17 @@ import Title from '@/Components/common/Title/Title';
 import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
 import { Box, Button, Grid, Paper, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { createCategory, deleteCategory, getCategories, updateCategory } from '../../Utils/API/data';
+import { createColor, deleteColor, getColors, updateColor } from '../../Utils/API/data';
 
 const page = () => {
-    const [categories, setCategories] = useState([]);
+
+    const [colors, setColors] = useState([])
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(0);
-    const [getCategoryIsLoading, setGetCategoryIsLoading] = useState(false);
+    const [getColorIsLoading, setGetColorIsLoading] = useState(false)
     const [searchText, setSearchText] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [categoryName, setCategoryName] = useState("");
+    const [selectedColor, setSelectedColor] = useState(null);
+    const [colorName, setColorName] = useState("");
     const [error, setError] = useState("");
 
 
@@ -25,83 +26,81 @@ const page = () => {
     }
 
     const handleCreate = async () => {
-        if (!categoryName.trim()) {
-            setError("category cannot be empty")
+        if (!colorName.trim()) {
+            setError("Color name cannot be empty");
             return;
         }
         setError("")
-        const result = await createCategory({
-            name: categoryName,
+        const result = await createColor({
+            name: colorName,
         })
         console.log("🚀 ~ handleCreate ~ result:", result)
         if (result?.success) {
-            fetchCategories()
-            setCategoryName("")
+            fetchColors()
+            setColorName("")
         }
     }
 
     const getUpdateItem = (item) => {
-        item && setSelectedCategory(item);
-        item && setCategoryName(item?.name || "");
-
+        item && setSelectedColor(item);
+        item && setColorName(item?.name || "");
     }
 
+
     const handleUpdate = async () => {
-        if (!categoryName.trim()) {
-            setError("category cannot be empty")
-            return
+        if (!colorName.trim()) {
+            setError("Color name cannot be empty");
+            return;
         }
         setError("")
-        const result = await updateCategory(selectedCategory?.id, {
-            id: selectedCategory?.id,
-            name: categoryName || selectedCategory?.name,
+        const result = await updateColor(selectedColor?.id, {
+            id: selectedColor?.id,
+            name: colorName || selectedColor?.name
         })
         console.log("🚀 ~ handleUpdate ~ result:", result)
-        result?.success && fetchCategories();
+        result?.success && fetchColors()
     }
 
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this category?");
+        const confirmDelete = window.confirm("Are you sure you want to delete this color?");
         if (!confirmDelete) return;
-        const result = await deleteCategory(id);
+        const result = await deleteColor(id)
         console.log("🚀 ~ handleDelete ~ result:", result)
-        result?.success && fetchCategories();
-        // Call the delete function with the id
+        result?.success && fetchColors()
     }
 
-    const fetchCategories = async () => {
-
-        setGetCategoryIsLoading(true);
-        const result = await getCategories({
+    const fetchColors = async () => {
+        setGetColorIsLoading(true)
+        const result = await getColors({
             pageSize: pageSize,
             pageIndex: pageIndex,
             searchText: searchText,
-        });
-
+        })
         if (result?.success) {
-            setCategories(result.data);
+            setColors(result.data)
         }
-        setGetCategoryIsLoading(false);
-    };
+        setGetColorIsLoading(false)
+    }
+
     const Column = [
         { accessorKey: 'name', header: 'Name' },
     ]
 
     React.useEffect(() => {
-        fetchCategories();
+        fetchColors();
     }, [pageIndex, pageSize, searchText]);
 
 
 
     return (
         <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Category" />
+            <Title title="Color" />
             <Grid container spacing={{ xs: 3, md: 3 }}>
                 <Grid item xs={12} md={6}>
                     <TextField
                         autoFocus
-                        value={categoryName}
-                        onChange={(e) => setCategoryName(e.target.value)}
+                        value={colorName}
+                        onChange={(e) => setColorName(e.target.value)}
                         label="Name"
                         variant="outlined"
                         fullWidth
@@ -115,7 +114,7 @@ const page = () => {
                 </Grid>
             </Grid>
             <Button
-                onClick={selectedCategory ? handleUpdate : handleCreate}
+                onClick={selectedColor ? handleUpdate : handleCreate}
                 style={{
                     padding: '5px 10px',
                     color: '#fff',
@@ -124,19 +123,19 @@ const page = () => {
                     cursor: 'pointer',
                     marginTop: '16px'
                 }}
+                bg="primary"
                 variant="contained"
-                color="primary"
             >
-                {selectedCategory ? "Update Category" : "Create Category"}
+                {selectedColor ? "Update Color" : "Add Color"}
             </Button>
             {/* Table Below */}
             <Box mt={4} sx={{ overflowX: 'auto' }}>
                 <MaterialTable
-                    title={"Category List"}
-                    data={categories}
+                    title={"Color List"}
+                    data={colors}
                     columns={Column}
                     onPagination={handlePageChange}
-                    isLoading={getCategoryIsLoading}
+                    isLoading={getColorIsLoading}
                     onSearch={handleGlobalSearch}
                     onDelete={handleDelete}
                     onUpdate={getUpdateItem}

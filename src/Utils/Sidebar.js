@@ -30,6 +30,16 @@ export const menu = [
         href: "/category",
     },
     {
+        icon: <Megaphone size={16} />,
+        label: "Color",
+        href: "/colors",
+    },
+    {
+        icon: <Megaphone size={16} />,
+        label: "Sizes",
+        href: "/size",
+    },
+    {
         icon: <Users size={16} />,
         label: "Orders",
         href: "/orders",

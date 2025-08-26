@@ -28,6 +28,7 @@
     --color-gradientBlackDark: var(--gradient-black-dark);
   }
 
+
   /* Styles */
   --toastify-toast-bd-radius: 0px;
 
@@ -39,32 +40,26 @@
     @apply text-gray-500 dark:text-white;
   }
 
-  .Mui-focused {
+  /* .Mui-focused {
     color: #ed8a51 !important;
-  }
+  } */
 
   .MuiFormControl-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-700 border-gray-200;
     /* default */
   }
 
-  .MuiFormControl-root
-    .MuiOutlinedInput-root:hover
-    .MuiOutlinedInput-notchedOutline {
+  .MuiFormControl-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-700 border-gray-200;
     /* on hover */
   }
 
-  .MuiFormControl-root
-    .MuiOutlinedInput-root.Mui-focused
-    .MuiOutlinedInput-notchedOutline {
+  .MuiFormControl-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-600 border-gray-300;
     /* on focus */
   }
 
-  .css-28116y-MuiAutocomplete-root
-    .MuiOutlinedInput-root
-    .MuiAutocomplete-input {
+  .css-28116y-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
     @apply p-0;
   }
 
@@ -72,8 +67,21 @@
     @apply top-[-6px];
   }
 
-  .css-1hoqul-MuiPaper-root {
+  /* Material Ui Paper Element */
+  .css-1kxdnz3-MuiPaper-root {
     @apply dark:bg-[#1d2229];
+    @apply bg-white;
+  }
+
+  /* Material ui Table */
+  .css-1hoqul-MuiPaper-root {
+    /* @apply dark:bg-[#1d2229];
+    @apply bg-white */
+  }
+
+  /* Material Button */
+  .MuiPaper-elevation>.css-74d805-MuiButtonBase-root-MuiButton-root {
+    background-color: #ed8a51;
   }
 
   .MuiPaper-rounded {
@@ -160,7 +168,7 @@
     @apply bg-[#f9f9f6];
   }
 
-  .rdrCalendarWrapper .rdrDay > span:first-child {
+  .rdrCalendarWrapper .rdrDay>span:first-child {
     color: var(--theme-color) !important;
   }
 
@@ -175,7 +183,7 @@
     border-radius: 0 !important;
   }
 
-  .px-2 .MuiPaper-elevation > .MuiBox-root {
+  .px-2 .MuiPaper-elevation>.MuiBox-root {
     @apply dark:bg-[#1d2229];
   }
 
@@ -184,14 +192,12 @@
   }
 
   /* Mui box root */
-  .MuiTableHead-root .MuiTableCell-head > .MuiBox-root {
+  .MuiTableHead-root .MuiTableCell-head>.MuiBox-root {
     @apply dark:text-[#ecf0f1];
   }
 
   /* Mui icon root */
-  .MuiTableHead-root
-    .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root
-    .MuiSvgIcon-root {
+  .MuiTableHead-root .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root .MuiSvgIcon-root {
     @apply dark:text-[#ecf0f1];
   }
 

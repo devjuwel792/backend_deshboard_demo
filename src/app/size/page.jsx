@@ -1,18 +1,19 @@
 'use client'
+import React, { useState } from 'react';
 import Title from '@/Components/common/Title/Title';
 import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
 import { Box, Button, Grid, Paper, TextField } from '@mui/material';
-import React, { useState } from 'react';
-import { createCategory, deleteCategory, getCategories, updateCategory } from '../../Utils/API/data';
+import { createSize, deleteSize, getSizes, updateSize } from '@/Utils/API/size';
+
 
 const page = () => {
-    const [categories, setCategories] = useState([]);
+    const [sizes, setSizes] = useState([])
     const [pageSize, setPageSize] = useState(10);
     const [pageIndex, setPageIndex] = useState(0);
-    const [getCategoryIsLoading, setGetCategoryIsLoading] = useState(false);
+    const [getSizeIsLoading, setSizeIsLoading] = useState(false)
     const [searchText, setSearchText] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [categoryName, setCategoryName] = useState("");
+    const [selectedSize, setSelectedSize] = useState(null)
+    const [sizeName, setSizeName] = useState("")
     const [error, setError] = useState("");
 
 
@@ -25,84 +26,77 @@ const page = () => {
     }
 
     const handleCreate = async () => {
-        if (!categoryName.trim()) {
-            setError("category cannot be empty")
+        if (!sizeName.trim()) {
+            setError("Size name cannot be empty");
             return;
         }
-        setError("")
-        const result = await createCategory({
-            name: categoryName,
-        })
-        console.log("🚀 ~ handleCreate ~ result:", result)
+        setError("");
+        const result = await createSize({ name: sizeName });
         if (result?.success) {
-            fetchCategories()
-            setCategoryName("")
+            fetchSizes();
+            setSizeName("");
         }
-    }
+    };
 
     const getUpdateItem = (item) => {
-        item && setSelectedCategory(item);
-        item && setCategoryName(item?.name || "");
-
+        item && setSelectedSize(item);
+        item && setSizeName(item?.name || "");
     }
 
     const handleUpdate = async () => {
-        if (!categoryName.trim()) {
-            setError("category cannot be empty")
-            return
+        if (!sizeName.trim()) {
+            setError("Size name cannot be empty");
+            return;
         }
-        setError("")
-        const result = await updateCategory(selectedCategory?.id, {
-            id: selectedCategory?.id,
-            name: categoryName || selectedCategory?.name,
-        })
-        console.log("🚀 ~ handleUpdate ~ result:", result)
-        result?.success && fetchCategories();
-    }
+        setError("");
+        const result = await updateSize(selectedSize?.id, {
+            id: selectedSize?.id,
+            name: sizeName
+        });
+        result?.success && fetchSizes();
+    };
 
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this category?");
+        const confirmDelete = window.confirm("Are you sure you want to delete this size?");
         if (!confirmDelete) return;
-        const result = await deleteCategory(id);
+        const result = await deleteSize(id)
         console.log("🚀 ~ handleDelete ~ result:", result)
-        result?.success && fetchCategories();
-        // Call the delete function with the id
+        result?.success && fetchSizes()
     }
 
-    const fetchCategories = async () => {
-
-        setGetCategoryIsLoading(true);
-        const result = await getCategories({
+    const fetchSizes = async () => {
+        setSizeIsLoading(true)
+        const result = await getSizes({
             pageSize: pageSize,
             pageIndex: pageIndex,
-            searchText: searchText,
-        });
-
+            searchText: searchText
+        })
         if (result?.success) {
-            setCategories(result.data);
+            setSizes(result.data)
         }
-        setGetCategoryIsLoading(false);
-    };
+        setSizeIsLoading(false)
+    }
+
     const Column = [
         { accessorKey: 'name', header: 'Name' },
     ]
 
     React.useEffect(() => {
-        fetchCategories();
+        fetchSizes();
     }, [pageIndex, pageSize, searchText]);
 
 
 
     return (
         <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Category" />
+            <Title title="Sizes" />
             <Grid container spacing={{ xs: 3, md: 3 }}>
                 <Grid item xs={12} md={6}>
                     <TextField
                         autoFocus
-                        value={categoryName}
-                        onChange={(e) => setCategoryName(e.target.value)}
-                        label="Name"
+                        value={sizeName}
+                        onChange={(e) => setSizeName(e.target.value)}
+                        label="Size"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -115,7 +109,7 @@ const page = () => {
                 </Grid>
             </Grid>
             <Button
-                onClick={selectedCategory ? handleUpdate : handleCreate}
+                onClick={selectedSize ? handleUpdate : handleCreate}
                 style={{
                     padding: '5px 10px',
                     color: '#fff',
@@ -124,19 +118,19 @@ const page = () => {
                     cursor: 'pointer',
                     marginTop: '16px'
                 }}
+                bg=""
                 variant="contained"
-                color="primary"
             >
-                {selectedCategory ? "Update Category" : "Create Category"}
+                {selectedSize ? "Update Size" : "Add Size"}
             </Button>
             {/* Table Below */}
             <Box mt={4} sx={{ overflowX: 'auto' }}>
                 <MaterialTable
-                    title={"Category List"}
-                    data={categories}
+                    title={"Size List"}
+                    data={sizes}
                     columns={Column}
                     onPagination={handlePageChange}
-                    isLoading={getCategoryIsLoading}
+                    isLoading={getSizeIsLoading}
                     onSearch={handleGlobalSearch}
                     onDelete={handleDelete}
                     onUpdate={getUpdateItem}
