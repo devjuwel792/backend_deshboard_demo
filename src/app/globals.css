@@ -40,9 +40,9 @@
     @apply text-gray-500 dark:text-white;
   }
 
-  /* .Mui-focused {
-    color: #ed8a51 !important;
-  } */
+  .Mui-focused {
+    @apply text-[#fff];
+  }
 
   .MuiFormControl-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-700 border-gray-200;
@@ -178,37 +178,47 @@
 
   /* END */
 
+
+
+  
   /* *****************Table START******************** */
   .css-1hoqul-MuiPaper-root {
     border-radius: 0 !important;
   }
 
-  .px-2 .MuiPaper-elevation>.MuiBox-root {
-    @apply dark:bg-[#1d2229];
+  /* Mui Table Header */
+  .shadow .MuiPaper-elevation>.MuiBox-root {
+    @apply dark:bg-[#242930];
   }
 
+  /* Table label */
   .MuiTable-root .MuiTableHead-root .css-1mpnnre-MuiTableRow-root {
-    /* background-color: #303030; */
+    @apply dark:bg-[#1d2229];
   }
 
   /* Mui box root */
   .MuiTableHead-root .MuiTableCell-head>.MuiBox-root {
-    @apply dark:text-[#ecf0f1];
+    @apply dark:text-[#ecf0f1] text-black;
   }
 
-  /* Mui icon root */
+  /* Mui table label bg */
   .MuiTableHead-root .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root .MuiSvgIcon-root {
-    @apply dark:text-[#ecf0f1];
+    @apply dark:text-[#ecf0f1] text-black;
   }
 
-  /* Table body row  light*/
-  /* .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
-  background-color: #ffffff !important;
-} */
-  /* Table body row  dark*/
+  /* Table Row */
+  /* ISSUE ase */
+  /* @apply dark:bg-[#242930] kaj kore na*/
   .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
-    /* background-color: #1d2229 !important; */
+    background-color: #242930 !important;
   }
+
+  /* Mui table cell body */
+  .MuiTableBody-root .MuiTableCell-body {
+    @apply dark:text-[#ffffff] text-black;
+  }
+
+
 
   /* *****************Table End******************** */
 
