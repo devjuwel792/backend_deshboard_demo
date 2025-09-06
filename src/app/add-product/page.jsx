@@ -12,15 +12,15 @@ const page = () => {
     const [pageIndex, setPageIndex] = React.useState(0);
     const [searchText, setSearchText] = React.useState("");
 
-    const [selectedColor, setSelectedColor] = useState(null)
+    const [selectedColor, setSelectedColor] = useState([])
     const [colors, setColors] = useState([])
     const [colorLoading, setColorLoading] = useState(false)
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState([]);
     const [categories, setCategories] = useState([]);
     const [categoryLoading, setCategoryLoading] = useState(false);
 
-    const [selectedSize, setSelectedSize] = useState(null)
+    const [selectedSize, setSelectedSize] = useState([])
     const [size, setSize] = useState([])
     const [sizeLoading, setSizeLoading] = useState(false)
 
@@ -144,12 +144,13 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <Autocomplete
+                        multiple
                         options={colors}
                         loading={colorLoading}
                         getOptionLabel={(option) => option.label || option.name || ""}
                         isOptionEqualToValue={(option, value) => option.id === value.id}
-                        value={selectedColor}
-                        onChange={(_, value) => setSelectedColor(value)}
+                        value={selectedColor} // this should be an array now
+                        onChange={(_, value) => setSelectedColor(value)} // value will be an array
                         onInputChange={(_, value) => fetchColors(value)}
                         renderInput={(params) => (
                             <TextField
@@ -157,7 +158,7 @@ const page = () => {
                                 label="Color"
                                 variant="outlined"
                                 size="small"
-                                fullWidth        
+                                fullWidth
                                 InputProps={{
                                     ...params.InputProps,
                                     sx: { borderRadius: 0 },
@@ -169,6 +170,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <Autocomplete
+                        multiple
                         options={categories}
                         loading={categoryLoading}
                         getOptionLabel={(option) => option.label || option.name || ""}
@@ -195,6 +197,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <Autocomplete
+                        multiple
                         options={size}
                         loading={sizeLoading}
                         getOptionLabel={(option) => option.label || option.name || ""}

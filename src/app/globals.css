@@ -92,6 +92,19 @@
     @apply border-0;
   }
 
+  /* placeholder */
+  .css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root{
+    @apply dark:text-white text-black;
+  }
+
+  .css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root.Mui-focused{
+    @apply dark:text-white text-black;
+  }
+
+  .css-1kfabtt-MuiFormLabel-root-MuiInputLabel-root{
+@apply dark:text-white text-black;
+  }
+
   /* ********************** react-toastify  START *************************** */
 
   .Toastify__toast--success {
