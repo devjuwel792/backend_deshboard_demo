@@ -127,7 +127,7 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
     ];
 
 
-    console.log("🚀 ~ searchText:", searchText)
+    // console.log("🚀 ~ searchText:", searchText)
 
     return (
         <div className="shadow mt-4">
@@ -171,7 +171,7 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
                         className="ml-[10px]"
                     >
                         <div>
-                            <h2 className="mb-[20px] text-black dark:text-white font-bold lg:text-2xl md:text-xl sm:text-lg">
+                            <h2 className="mb-[20px] mt-[20px] text-black dark:text-white font-bold lg:text-2xl md:text-xl sm:text-lg">
                                 {title}
                             </h2>
                             {/* <Button

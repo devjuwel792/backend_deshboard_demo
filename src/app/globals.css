@@ -36,12 +36,16 @@
     display: none;
   }
 
-  .MuiFormLabel-root {
+  /* .MuiFormLabel-root {
     @apply text-gray-500 dark:text-white;
-  }
-
+  } */
+/* 
   .Mui-focused {
     @apply text-[#fff];
+  } */
+
+  .css-1pzfmz2-MuiInputBase-input-MuiOutlinedInput-input{
+    @apply dark:text-white text-black
   }
 
   .MuiFormControl-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
@@ -180,7 +184,7 @@
 
 
 
-  
+
   /* *****************Table START******************** */
   .css-1hoqul-MuiPaper-root {
     border-radius: 0 !important;
@@ -209,8 +213,11 @@
   /* Table Row */
   /* ISSUE ase */
   /* @apply dark:bg-[#242930] kaj kore na*/
-  .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
-    background-color: #242930 !important;
+  /* .MuiTable-root .MuiTableBody-root .css-k33iqf-MuiTableRow-root {
+     @apply dark:bg-[#242930] bg-[#ffffff];
+  } */
+  .css-k33iqf-MuiTableRow-root {
+    @apply dark:bg-[#242930]! bg-[#ffffff]!;
   }
 
   /* Mui table cell body */
