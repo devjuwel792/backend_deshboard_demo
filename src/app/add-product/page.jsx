@@ -3,8 +3,8 @@ import Title from '@/Components/common/Title/Title';
 import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
 import { categoryDropdown, colorDropdown } from '@/Utils/API/data';
 import { sizeDropdown } from '@/Utils/API/size';
-import { Grid, TextField, Box, Paper, Autocomplete, Button } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Grid, TextField, Box, Paper, Autocomplete, Button, Typography } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
 
 const page = () => {
 
@@ -23,6 +23,11 @@ const page = () => {
     const [selectedSize, setSelectedSize] = useState([])
     const [size, setSize] = useState([])
     const [sizeLoading, setSizeLoading] = useState(false)
+
+    const [images, setImages] = useState([]);
+    const fileInputRef = useRef(null);
+
+    const [preview, setPreview] = useState(null);
 
     const handlePageChange = (pagination) => {
         setPageIndex(pagination?.pageIndex || 0);
@@ -60,6 +65,31 @@ const page = () => {
         setCategoryLoading(false)
     }
 
+    const handleAvatarClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const newImages = files.map((file) => ({
+            file,
+            preview: URL.createObjectURL(file),
+        }));
+        setImages((prev) => [...prev, ...newImages]);
+    };
+
+    const handleRemoveImage = (index) => {
+        // Revoke the object URL to free memory
+        URL.revokeObjectURL(images[index].preview);
+        setImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    useEffect(() => {
+        return () => {
+            images.forEach((img) => URL.revokeObjectURL(img.preview));
+        };
+    }, [images]);
+
     useEffect(() => {
         fetchCategories()
         fetchColors()
@@ -74,7 +104,6 @@ const page = () => {
         { accessorKey: 'category', header: 'Category' },
         { accessorKey: 'color', header: 'Color' },
         { accessorKey: 'price', header: 'Price' },
-
     ]
 
     return (
@@ -108,7 +137,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Stock"
+                        label="Discounted Price"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -120,7 +149,31 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <TextField
-                        label="Description"
+                        label="Rating"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid>
+
+                {/* <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Stock"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid> */}
+
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Product Detail"
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -221,6 +274,89 @@ const page = () => {
                         )}
                     />
                 </Grid>
+
+                <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}
+                >
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        hidden
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        multiple
+                    />
+
+                    <Box
+                        sx={{
+                            width: 150,
+                            height: 150,
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            border: "1px dashed #ccc",
+                            "&:hover": { borderColor: "#1976d2" },
+                            mb: 2,
+                        }}
+                        onClick={handleAvatarClick}
+                    >
+                        <Typography variant="caption">Upload Images</Typography>
+                    </Box>
+
+                    {/* Preview Grid */}
+                    <Grid container spacing={2}>
+                        {images.map((img, index) => (
+                            <Grid item key={index}>
+                                <Box
+                                    sx={{
+                                        position: "relative",
+                                        width: 100, // smaller width
+                                        height: 100, // smaller height
+                                        borderRadius: "8px",
+                                        overflow: "hidden",
+                                        border: "1px solid #ddd",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}
+                                >
+                                    <img
+                                        src={img.preview}
+                                        alt={`preview-${index}`}
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                            display: "block"
+                                        }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        size="small"
+                                        onClick={() => handleRemoveImage(index)}
+                                        sx={{
+                                            position: "absolute",
+                                            top: 4,
+                                            right: 4,
+                                            minWidth: "24px",
+                                            padding: "0 4px",
+                                            fontSize: "10px"
+                                        }}
+                                    >
+                                        X
+                                    </Button>
+                                </Box>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Grid>
+
             </Grid>
             {/* Table Below */}
             <Button
