@@ -1,7 +1,7 @@
 'use client'
 import Title from '@/Components/common/Title/Title';
 import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
-import { categoryDropdown, colorDropdown } from '@/Utils/API/data';
+import { categoryDropdown, colorDropdown, createProduct, deleteProduct, getProduct, updateCategory, updateProduct } from '@/Utils/API/data';
 import { sizeDropdown } from '@/Utils/API/size';
 import { Grid, TextField, Box, Paper, Autocomplete, Button, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,7 +16,7 @@ const page = () => {
     const [colors, setColors] = useState([])
     const [colorLoading, setColorLoading] = useState(false)
 
-    const [selectedCategory, setSelectedCategory] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [categories, setCategories] = useState([]);
     const [categoryLoading, setCategoryLoading] = useState(false);
 
@@ -28,6 +28,19 @@ const page = () => {
     const fileInputRef = useRef(null);
 
     const [preview, setPreview] = useState(null);
+
+    const [products, setProducts] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const [productName, setProductName] = useState("")
+    const [productPrice, setProductPrice] = useState(0)
+    const [productDiscountPridce, setProductDiscountPrice] = useState(0)
+    const [productRating, setProductRating] = useState(0)
+    const [productMaterial, setProductMaterial] = useState("")
+    const [productDetails, setProductDetails] = useState("")
+    const [selectedProduct, setSelectedProduct] = useState(null)
+    const [post, setPost] = useState(true)
+
 
     const handlePageChange = (pagination) => {
         setPageIndex(pagination?.pageIndex || 0);
@@ -90,20 +103,157 @@ const page = () => {
         };
     }, [images]);
 
+    const fetchProduct = async () => {
+
+
+        setIsLoading(true);
+        const result = await getProduct({
+            pageSize: pageSize,
+            pageIndex: pageIndex,
+            searchText: searchText,
+        });
+
+        if (result?.success) {
+            setProducts(result.data);
+
+        }
+        setIsLoading(false);
+
+    }
+    const handleDelete = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this category?");
+        if (!confirmDelete) return;
+        const result = await deleteProduct(id);
+        result?.success && fetchProduct();
+    }
+    const handleCreate = async () => {
+        // if (!productName.trim()) {
+        //     setError("category cannot be empty")
+        //     return;
+        // }
+        // setError("")
+        const result = await createProduct(
+            {
+
+                name: productName,
+                categoryId: selectedCategory?.id,
+                price: productPrice,
+                discountPrice: productDiscountPridce,
+                rating: productRating,
+                productDetail: {
+
+                    description: productDetails,
+                    material: productMaterial
+                },
+                // "productImages": [
+                //     {
+                //         "id": 0,
+                //         "image": "string",
+                //         "imageUrl": "string",
+                //         "imageType": "string",
+                //         "productId": 0
+                //     }
+                // ],
+                sizeIds: selectedSize.map((value) => value.id),
+                colorIds: selectedColor.map((value) => value.id)
+            }
+
+        )
+
+        if (result?.success) {
+            fetchProduct()
+        }
+    }
+    const handleUpdate = async () => {
+        const result = await updateProduct(selectedProduct.id,
+            {
+                id: selectedProduct.id,
+                name: productName,
+                categoryId: selectedCategory?.id,
+                price: productPrice,
+                discountPrice: productDiscountPridce,
+                rating: productRating,
+                productDetail: {
+
+                    description: productDetails,
+                    material: productMaterial
+                },
+                // "productImages": [
+                //     {
+                //         "id": 0,
+                //         "image": "string",
+                //         "imageUrl": "string",
+                //         "imageType": "string",
+                //         "productId": 0
+                //     }
+                // ],
+                sizeIds: selectedSize.map((value) => value.id),
+                colorIds: selectedColor.map((value) => value.id)
+            }
+
+        )
+
+        if (result?.success) {
+
+            fetchProduct()
+            setPost(true)
+
+        }
+
+
+    }
+    const getProductData = (data) => {
+        if (data) {
+            setPost(false)
+            setProductName(data.name)
+            setProductPrice(data.price)
+            setProductDiscountPrice(data.discountPrice)
+            setProductRating(data.rating)
+            setProductMaterial(data.productDetail.description)
+            setProductDetails(data.productDetail.material)
+            setSelectedCategory(data.category)
+            setSelectedColor(data.productColors)
+            setSelectedSize(data.productSizes)
+            setSelectedProduct(data)
+        }
+
+        console.log("🚀 ~ getProductData ~ data:", data)
+
+    }
+
+
     useEffect(() => {
         fetchCategories()
         fetchColors()
         fetchSizes()
+
     }, [])
+
+    useEffect(() => {
+        fetchProduct();
+    }, [pageIndex, pageSize, searchText]);
 
     const Column = [
         { accessorKey: 'name', header: 'Name' },
         { accessorKey: 'price', header: 'Price' },
-        { accessorKey: 'size', header: 'Size' },
+        { accessorKey: 'category.name', header: 'Category' },
+        { accessorKey: 'discountPrice', header: 'Discount Price' },
         { accessorKey: 'rating', header: 'Rating' },
-        { accessorKey: 'category', header: 'Category' },
-        { accessorKey: 'color', header: 'Color' },
-        { accessorKey: 'price', header: 'Price' },
+        {
+            header: "Description",
+            Cell: ({ row }) => row.original.productDetail?.description,
+        },
+        {
+            header: "Sizes",
+            Cell: ({ row }) =>
+                row.original.productSizes.map((s) => s.name).join(", "),
+        },
+        {
+            header: "Colors",
+            Cell: ({ row }) =>
+                row.original.productColors.map((c) => c.name).join(", "),
+        },
+
     ]
 
     return (
@@ -113,6 +263,8 @@ const page = () => {
                 <Grid item xs={12} md={6}>
                     <TextField
                         autoFocus
+                        value={productName}
+                        onChange={(e) => setProductName(e.target.value)}
                         label="Name"
                         variant="outlined"
                         fullWidth
@@ -126,6 +278,8 @@ const page = () => {
                 <Grid item xs={12} md={6}>
                     <TextField
                         label="Price"
+                        value={productPrice}
+                        onChange={(e) => setProductPrice(e.target.value)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -138,6 +292,8 @@ const page = () => {
                 <Grid item xs={12} md={6}>
                     <TextField
                         label="Discounted Price"
+                        value={productDiscountPridce}
+                        onChange={(e) => setProductDiscountPrice(e.target.value)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -150,6 +306,8 @@ const page = () => {
                 <Grid item xs={12} md={6}>
                     <TextField
                         label="Rating"
+                        value={productRating}
+                        onChange={(e) => setProductRating(e.target.value)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -174,6 +332,21 @@ const page = () => {
                 <Grid item xs={12} md={6}>
                     <TextField
                         label="Product Detail"
+                        value={productDetails}
+                        onChange={(e) => setProductDetails(e.target.value)}
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        InputProps={{
+                            sx: { borderRadius: 0 },
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <TextField
+                        label="Product Material"
+                        value={productMaterial}
+                        onChange={(e) => setProductMaterial(e.target.value)}
                         variant="outlined"
                         fullWidth
                         size="small"
@@ -183,7 +356,7 @@ const page = () => {
                     />
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                {/* <Grid item xs={12} md={6}>
                     <TextField
                         label="Image URL"
                         variant="outlined"
@@ -193,7 +366,7 @@ const page = () => {
                             sx: { borderRadius: 0 },
                         }}
                     />
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12} md={6}>
                     <Autocomplete
@@ -223,7 +396,7 @@ const page = () => {
 
                 <Grid item xs={12} md={6}>
                     <Autocomplete
-                        multiple
+                        // multiple
                         options={categories}
                         loading={categoryLoading}
                         getOptionLabel={(option) => option.label || option.name || ""}
@@ -360,7 +533,7 @@ const page = () => {
             </Grid>
             {/* Table Below */}
             <Button
-                // onClick={}
+                onClick={!post ? handleUpdate : handleCreate}
                 style={{
                     padding: '5px 10px',
                     color: '#fff',
@@ -372,20 +545,20 @@ const page = () => {
                 bg=""
                 variant="contained"
             >
-                Add Product
-                {/* {selectedColor ? "Update Product" : "Add Product"} */}
+
+                {!post ? "Update Product" : "Add Product"}
             </Button>
             {/* Table Below */}
             <Box mt={4} sx={{ overflowX: 'auto' }}>
                 <MaterialTable
                     title={"Product List"}
-                    data={colors}
+                    data={products}
                     columns={Column}
                     onPagination={handlePageChange}
-                    // isLoading={}
+                    isLoading={isLoading}
                     onSearch={handleGlobalSearch}
-                // onDelete={}
-                // onUpdate={}
+                    onDelete={handleDelete}
+                    onUpdate={getProductData}
                 />
             </Box>
         </Paper>

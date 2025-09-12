@@ -17,6 +17,14 @@ const create_color_url = "/api/v1/create-color"
 const update_color_url = "/api/v1/update-color"
 const color_dropdown_url = "/api/v1/dropdown-colors"
 
+// product 
+const get_products_url = "/api/v1/get-products";
+const create_product_url = "/api/v1/create-product";
+const update_product_url = "/api/v1/update-product";
+const delete_product_url = "/api/v1/delete-product";
+const get_product_by_id_url = "/api/v1/get-product";
+
+
 export const getCategories = async ({ pageSize, pageIndex, searchText = "" }) => {
     const url = get_categories_url;
     return await request(
@@ -43,10 +51,9 @@ export const getCategoryById = async (categoryId) => {
 };
 
 export const createCategory = async (categoryData) => {
-    const url = "/api/v1/create-category";
     return await request(
         {
-            url,
+            url:create_category_url,
             method: "POST",
             data: categoryData,
         }
@@ -136,7 +143,7 @@ export const deleteColor = async (colorId) => {
     });
 };
 
-export const colorDropdown = async ( searchText = "") => {
+export const colorDropdown = async (searchText = "") => {
     const url = color_dropdown_url;
     return await request(
         {
@@ -147,4 +154,61 @@ export const colorDropdown = async ( searchText = "") => {
             }
         }
     )
+}
+
+export const getProduct = async ({ pageSize, pageIndex, searchText = "" }) => {
+    const url = get_products_url;
+    return await request(
+        {
+            url,
+            method: "GET",
+            params: {
+                pageSize: pageSize,
+                pageIndex,
+                searchText,
+            },
+        }
+    );
+};
+
+// export const getCategoryById = async (categoryId) => {
+//     const url = `${get_category_by_id_url}/${categoryId}`;
+//     return await request(
+//         {
+//             url,
+//             method: "GET",
+//         }
+//     );
+// };
+
+export const createProduct = async (productData) => {
+
+    return await request(
+        {
+            url: create_product_url,
+            method: "POST",
+            data: productData,
+        }
+    );
+};
+
+export const updateProduct = async (productId, productData) => {
+    const url = `${update_product_url}/${productId}`;
+    return await request(
+        {
+            url,
+            method: "PUT",
+            data: productData,
+        }
+    );
+};
+
+export const deleteProduct = async (ProductId) => {
+    const url = `${delete_product_url}/${ProductId}`;
+    return await request(
+        {
+            url,
+            method: "DELETE",
+        }
+    );
 }

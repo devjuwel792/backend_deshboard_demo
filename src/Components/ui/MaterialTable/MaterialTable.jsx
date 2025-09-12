@@ -71,6 +71,8 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
             enableHiding: false,
             enableSorting: false,
             enableGlobalFilter: false,
+            pinned: "right",
+
             Cell: ({ row }) => {
                 const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -130,7 +132,7 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
     // console.log("🚀 ~ searchText:", searchText)
 
     return (
-        <div className="shadow mt-4">
+        <div className="shadow mt-4" style={{ overflowX: "auto" }}>
             <MaterialReactTable
                 columns={newColumns}
                 data={data?.data || []}
@@ -141,7 +143,13 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
                 enableStickyHeader={true}
                 getRowId={(row) => row.id}
                 columnFilterDisplayMode="popover"
-                initialState={{ showColumnFilters: false }}
+                initialState={{
+                    showColumnFilters: false,
+                    //"comfortable" → ডিফল্ট (normal row height)
+                    //"compact" → ছোট row height (mobile-friendly)
+                    //"spacious" → বড় row height
+                    density: "compact",
+                }}
                 positionToolbarAlertBanner='bottom'
                 muiPaginationProps={{
                     rowsPerPageOptions: [5, 10, 15, 20],
@@ -155,6 +163,7 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
                 rowCount={data?.total}
                 onPaginationChange={setPagination}
                 manualPagination
+
                 state={{
                     pagination,
                     isLoading: isLoading,
