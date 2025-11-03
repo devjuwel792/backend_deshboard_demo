@@ -3,6 +3,8 @@ import { menu } from '@/Utils/Sidebar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleSidebar } from '@/Helper/Redux/features/sidebar/sidebarSlice';
 import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
 import SubmenuSidebarItem from '../SidebarSubMenu/SubmenuSidebarItem';
@@ -11,7 +13,8 @@ import SubmenuSidebarItem from '../SidebarSubMenu/SubmenuSidebarItem';
 
 const Sidebar = ({ children }) => {
     const router = useRouter();
-    const [isOpen, setIsOpen] = useState(true);
+    const dispatch = useDispatch();
+    const isOpen = useSelector((state) => state.sidebar.isOpen);
     const [isHovered, setIsHovered] = useState(false);
     const actualWidth = isOpen || isHovered;
     const sidebarWidth = actualWidth
@@ -21,7 +24,7 @@ const Sidebar = ({ children }) => {
         ? "lg:pl-[280px] xl:pl-[320px]"
         : "lg:pl-[80px] xl:pl-[100px]";
 
-    const toggleSidebar = () => setIsOpen(!isOpen);
+    const handleToggleSidebar = () => dispatch(toggleSidebar());
     useEffect(() => {
         (async () => {
             // let result = await getCategories({ pageSize: 10, pageindex: 0, searchText: '' }, router);
@@ -51,7 +54,7 @@ const Sidebar = ({ children }) => {
                                 </div>
                             </Link>
                             <div className={`${!actualWidth ? "hidden" : ""}`}>
-                                <button onClick={toggleSidebar} className="cursor-pointer p-1 hover:bg-[#334155]">
+                                <button onClick={handleToggleSidebar} className="cursor-pointer p-1 hover:bg-[#334155]">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
@@ -72,7 +75,7 @@ const Sidebar = ({ children }) => {
                                 key={index}
                                 item={item}
                                 actualWidth={actualWidth}
-                                toggle={toggleSidebar}
+                                toggle={handleToggleSidebar}
                             />
                         ))}
                     </div>
@@ -82,7 +85,7 @@ const Sidebar = ({ children }) => {
             <div className={`${sidebarPosition} w-full duration-500 transition-all`}>
                 <div className='flex flex-col justify-between min-h-[calc(100vh-64px)]'>
                     <div>
-                        <Navbar toggleSidebar={toggleSidebar} />
+                        <Navbar toggleSidebar={handleToggleSidebar} />
                         <div className="overflow-scroll dark:bg-background bg-lightBg p-[30px]">
                             {children}
                         </div>

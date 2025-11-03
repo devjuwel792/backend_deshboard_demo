@@ -9,6 +9,8 @@ import {
 import Dropdown from "@/Components/ui/Dropdown/Dropdown";
 import HoverOutlineButton from "@/Components/ui/HoverOutlineButton/HoverOutlineButton";
 import SearchInput from "@/Components/ui/SearchInput/SearchInput";
+import { useDispatch } from 'react-redux';
+import { toggleSidebar } from '@/Helper/Redux/features/sidebar/sidebarSlice';
 
 const items = [
     { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
@@ -18,6 +20,8 @@ const items = [
 ];
 
 const Navbar = ({ toggleSidebar }) => {
+    const dispatch = useDispatch();
+    const handleToggleSidebar = () => dispatch(toggleSidebar());
     console.log("toggleSidebar", toggleSidebar)
     return (
         <div className="flex items-center justify-between xl:p-[30px] lg:p-[26px] md:p-[22px] p-4 bg-white dark:bg-darkGray">
@@ -27,7 +31,7 @@ const Navbar = ({ toggleSidebar }) => {
 
             <div className="flex items-center">
                 {/* sidebar toggle button */}
-                <button className='cursor-pointer p-2 hover:bg-[#334155] block xl:hidden lg:hidden' onClick={toggleSidebar}>
+                <button className='cursor-pointer p-2 hover:bg-[#334155] block xl:hidden lg:hidden' onClick={handleToggleSidebar}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
