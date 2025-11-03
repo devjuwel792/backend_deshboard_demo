@@ -20,7 +20,7 @@ const Sidebar = ({ children }) => {
     const actualWidth = isOpen || isHovered;
     const sidebarWidth = actualWidth
         ? "xl:w-[320px] lg:w-[280px] md:w-[180px] sm:w-[160px]"
-        : "xl:w-[100px] lg:w-[80px] md:w-[70px] sm:w-[70px]";
+        : "xl:w-[100px] lg:w-[80px] md:w-[0px] w-[0px]";
     const sidebarPosition = isOpen
         ? "lg:pl-[280px] xl:pl-[320px]"
         : "lg:pl-[80px] xl:pl-[100px]";
@@ -40,11 +40,11 @@ const Sidebar = ({ children }) => {
     )
     return (
         <>
-            <div className="h-screen z-10">
+            <div className="h-screen z-100">
                 <div
                     onMouseEnter={() => !isOpen && setIsHovered(true)}
                     onMouseLeave={() => !isOpen && setIsHovered(false)}
-                    className={`elegant-scroll transition-all duration-700 ${sidebarWidth} hidden lg:block fixed overflow-y-auto h-screen bg-lightBlack bg-gradient-to-b dark:from-gradientBlackLight dark:to-gradientBlackDark`}
+                    className={`elegant-scroll transition-all duration-700 ${sidebarWidth} lg:block fixed overflow-y-auto h-screen bg-lightBlack bg-gradient-to-b dark:from-gradientBlackLight dark:to-gradientBlackDark`}
                 >
                     <div className="text-sm text-white flex flex-col gap-1 p-4">
                         <div className={`flex items-center ${!actualWidth ? "justify-center" : "justify-between"}`}>

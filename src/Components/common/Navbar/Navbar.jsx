@@ -25,13 +25,13 @@ const Navbar = ({ toggleSidebar }) => {
     const dispatch = useDispatch();
     const { t, i18n } = useTranslation();
     const isDarkMode = useSelector((state) => state.theme.isDarkMode);
-    const handleToggleSidebar = () => dispatch(toggleSidebar());
+    // const handleToggleSidebar = () => dispatch(toggleSidebar());
     const handleLanguageChange = () => {
         const newLang = i18n.language === 'en' ? 'bn' : 'en';
         i18n.changeLanguage(newLang);
     };
     const handleThemeToggle = () => dispatch(toggleTheme());
-    console.log("toggleSidebar", toggleSidebar)
+    // console.log("toggleSidebar", toggleSidebar)
     return (
         <div className="sticky top-0 z-10 flex items-center justify-between xl:p-[30px] lg:p-[26px] md:p-[22px] p-4 bg-white dark:bg-darkGray">
 
@@ -40,7 +40,7 @@ const Navbar = ({ toggleSidebar }) => {
 
             <div className="flex items-center">
                 {/* sidebar toggle button */}
-                <button className='cursor-pointer p-2 hover:bg-[#334155] block xl:hidden lg:hidden' onClick={handleToggleSidebar}>
+                <button className='cursor-pointer p-2 hover:bg-[#334155] block xl:hidden lg:hidden' onClick={toggleSidebar}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -119,7 +119,7 @@ const Navbar = ({ toggleSidebar }) => {
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 
