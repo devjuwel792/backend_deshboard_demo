@@ -20,6 +20,11 @@ export const menu = [
         href: "/"
     },
     {
+        icon: <Package size={16} />,
+        label: "Products",
+        href: "/products",
+    },
+    {
         icon: <PackagePlus size={16} />,
         label: "Add Product",
         href: "/add-product",
