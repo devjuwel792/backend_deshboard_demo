@@ -5,6 +5,7 @@ import { categoryDropdown, colorDropdown, createProduct, deleteProduct, getProdu
 import { sizeDropdown } from '@/Utils/API/size';
 import { Grid, TextField, Box, Paper, Autocomplete, Button, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const page = () => {
 
@@ -121,17 +122,55 @@ const page = () => {
 
     }
     const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this category?");
+        const confirmDelete = window.confirm("Are you sure you want to delete this product?");
         if (!confirmDelete) return;
         const result = await deleteProduct(id);
-        result?.success && fetchProduct();
+        if (result?.success) {
+            toast.success("Product deleted successfully!");
+            fetchProduct();
+        } else {
+            toast.error("Failed to delete product.");
+        }
     }
     const handleCreate = async () => {
-        // if (!productName.trim()) {
-        //     setError("category cannot be empty")
-        //     return;
-        // }
-        // setError("")
+        // Form validation
+        if (!productName.trim()) {
+            toast.error("Product name is required.");
+            return;
+        }
+        if (!selectedCategory) {
+            toast.error("Category is required.");
+            return;
+        }
+        if (productPrice <= 0) {
+            toast.error("Price must be greater than 0.");
+            return;
+        }
+        if (productDiscountPridce < 0) {
+            toast.error("Discount price cannot be negative.");
+            return;
+        }
+        if (productRating < 0 || productRating > 5) {
+            toast.error("Rating must be between 0 and 5.");
+            return;
+        }
+        if (!productDetails.trim()) {
+            toast.error("Product details are required.");
+            return;
+        }
+        if (!productMaterial.trim()) {
+            toast.error("Product material is required.");
+            return;
+        }
+        if (selectedColor.length === 0) {
+            toast.error("At least one color must be selected.");
+            return;
+        }
+        if (selectedSize.length === 0) {
+            toast.error("At least one size must be selected.");
+            return;
+        }
+
         const result = await createProduct(
             {
 
@@ -145,15 +184,13 @@ const page = () => {
                     description: productDetails,
                     material: productMaterial
                 },
-                // "productImages": [
-                //     {
-                //         "id": 0,
-                //         "image": "string",
-                //         "imageUrl": "string",
-                //         "imageType": "string",
-                //         "productId": 0
-                //     }
-                // ],
+                productImages: images.map((img, index) => ({
+                    id: index,
+                    image: img.file.name,
+                    imageUrl: img.preview,
+                    imageType: img.file.type,
+                    productId: 0
+                })),
                 sizeIds: selectedSize.map((value) => value.id),
                 colorIds: selectedColor.map((value) => value.id)
             }
@@ -161,7 +198,10 @@ const page = () => {
         )
 
         if (result?.success) {
+            toast.success("Product added successfully!");
             fetchProduct()
+        } else {
+            toast.error("Failed to add product.");
         }
     }
     const handleUpdate = async () => {
@@ -194,10 +234,12 @@ const page = () => {
         )
 
         if (result?.success) {
-
+            toast.success("Product updated successfully!");
             fetchProduct()
             setPost(true)
 
+        } else {
+            toast.error("Failed to update product.");
         }
 
 
@@ -371,6 +413,7 @@ const page = () => {
                 <Grid item xs={12} md={6}>
                     <Autocomplete
                         multiple
+                        fullWidth
                         options={colors}
                         loading={colorLoading}
                         getOptionLabel={(option) => option.label || option.name || ""}

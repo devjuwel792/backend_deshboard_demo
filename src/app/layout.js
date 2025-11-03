@@ -1,6 +1,8 @@
 import Sidebar from "@/Components/common/Sidebar/Sidebar";
 import SubLayout from "@/Layout/SubLayout";
 import "./globals.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import Footer from "@/Components/common/Footer/Footer";
 // import Navbar from "@/Components/common/Navbar/Navbar";
 
@@ -29,6 +31,7 @@ export default function RootLayout({ children }) {
           <Sidebar>
             {children}
           </Sidebar>
+          <ToastContainer />
 
         </SubLayout>
       </body>
