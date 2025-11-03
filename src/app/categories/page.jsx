@@ -14,20 +14,18 @@ import {
 
 const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
   const [name, setName] = useState(category?.name || '');
-  const [description, setDescription] = useState(category?.description || '');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ name, description });
+    onSave({ name });
     setName('');
-    setDescription('');
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>{category ? 'Edit Category' : 'Add New Category'}</CardTitle>
@@ -44,17 +42,6 @@ const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter category name"
                 required
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium mb-1">
-                Description
-              </label>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter category description"
               />
             </div>
             <div className="flex gap-2 justify-end">
@@ -89,8 +76,6 @@ export default function CategoriesPage() {
   const columns = [
     { header: 'ID', accessorKey: 'id' },
     { header: 'Name', accessorKey: 'name' },
-    { header: 'Description', accessorKey: 'description' },
-    { header: 'Created At', accessorKey: 'created_at' },
   ];
 
   const handleCreate = async (categoryData) => {
@@ -156,7 +141,6 @@ export default function CategoriesPage() {
         <h1 className="text-3xl font-bold">Categories</h1>
         <Button onClick={handleAddNew}>Add New Category</Button>
       </div>
-
       <MaterialTable
         data={categoriesData}
         columns={columns}

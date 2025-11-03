@@ -5,8 +5,11 @@ const categoryApiSlice = apiSlice.injectEndpoints({
     // Categories endpoints
     getCategories: builder.query({
       query: (params = {}) => ({
-        url: '/categories',
-        params,
+        url: '/get-categories',
+        params: {
+          pageSize: params.limit || 10,
+          pageIndex: (params.page - 1) || 0,
+        },
       }),
       providesTags: ['Categories'],
     }),

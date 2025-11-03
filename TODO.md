@@ -1,26 +1,5 @@
-# Category Management Page Implementation
+# TODO: Integrate GET Categories API
 
-## Tasks to Complete
-
-- [x] Add RTK Query endpoints for categories in `src/Helper/Redux/features/api/categoryApiSlice.js`
-  - [x] `getCategories` (paginated query)
-  - [x] `getCategory` (single category query)
-  - [x] `createCategory` (mutation)
-  - [x] `updateCategory` (mutation)
-  - [x] `deleteCategory` (mutation)
-
-- [x] Create category management page at `src/app/categories/page.jsx`
-  - [x] Implement MaterialTable for listing categories
-  - [x] Add "Add Category" button
-  - [x] Implement edit/delete actions in table rows
-  - [x] Create modals for create/edit forms using UI components
-  - [x] Add pagination support from API
-  - [x] Style like WordPress admin (clean table, buttons, responsive)
-
-- [x] Update store.js to include categoryApiSlice
-
-- [ ] Test API integrations and handle loading/error states
-
-- [ ] Add categories link to sidebar navigation
-
-- [ ] Implement search/filtering functionality (optional)
+- [x] Update categoryApiSlice.js to use correct API endpoint '/api/v1/get-categories' and transform params to pageSize and pageIndex (0-based)
+- [x] Uncomment the MaterialTable component in src/app/categories/page.jsx to display categories data
+- [ ] Test the API integration and verify data display
