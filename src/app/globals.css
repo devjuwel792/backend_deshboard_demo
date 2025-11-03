@@ -28,7 +28,6 @@
     --color-gradientBlackDark: var(--gradient-black-dark);
   }
 
-
   /* Styles */
   --toastify-toast-bd-radius: 0px;
 
@@ -39,13 +38,13 @@
   /* .MuiFormLabel-root {
     @apply text-gray-500 dark:text-white;
   } */
-/* 
+  /* 
   .Mui-focused {
     @apply text-[#fff];
   } */
 
-  .css-1pzfmz2-MuiInputBase-input-MuiOutlinedInput-input{
-    @apply dark:text-white text-black
+  .css-1pzfmz2-MuiInputBase-input-MuiOutlinedInput-input {
+    @apply dark:text-white text-black;
   }
 
   .MuiFormControl-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
@@ -53,17 +52,23 @@
     /* default */
   }
 
-  .MuiFormControl-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  .MuiFormControl-root
+    .MuiOutlinedInput-root:hover
+    .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-700 border-gray-200;
     /* on hover */
   }
 
-  .MuiFormControl-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  .MuiFormControl-root
+    .MuiOutlinedInput-root.Mui-focused
+    .MuiOutlinedInput-notchedOutline {
     @apply dark:border-gray-600 border-gray-300;
     /* on focus */
   }
 
-  .css-28116y-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
+  .css-28116y-MuiAutocomplete-root
+    .MuiOutlinedInput-root
+    .MuiAutocomplete-input {
     @apply p-0;
   }
 
@@ -84,7 +89,7 @@
   }
 
   /* Material Button */
-  .MuiPaper-elevation>.css-74d805-MuiButtonBase-root-MuiButton-root {
+  .MuiPaper-elevation > .css-74d805-MuiButtonBase-root-MuiButton-root {
     background-color: #ed8a51;
   }
 
@@ -93,25 +98,25 @@
   }
 
   /* placeholder */
-  .css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root{
+  .css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root {
     @apply dark:text-white text-black;
   }
 
-  .css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root.Mui-focused{
+  .css-hvjq6j-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
     @apply dark:text-white text-black;
   }
 
-  .css-1kfabtt-MuiFormLabel-root-MuiInputLabel-root{
-@apply dark:text-white text-black;
+  .css-1kfabtt-MuiFormLabel-root-MuiInputLabel-root {
+    @apply dark:text-white text-black;
   }
 
-.css-1dybbl5-MuiChip-label{
-  @apply dark:text-white text-black;
-}
+  .css-1dybbl5-MuiChip-label {
+    @apply dark:text-white text-black;
+  }
 
-.css-16yb58i-MuiButtonBase-root-MuiChip-root .MuiChip-deleteIcon{
-  @apply text-red-500;
-}
+  .css-16yb58i-MuiButtonBase-root-MuiChip-root .MuiChip-deleteIcon {
+    @apply text-red-500;
+  }
   /* ********************** react-toastify  START *************************** */
 
   .Toastify__toast--success {
@@ -192,7 +197,7 @@
     @apply bg-[#f9f9f6];
   }
 
-  .rdrCalendarWrapper .rdrDay>span:first-child {
+  .rdrCalendarWrapper .rdrDay > span:first-child {
     color: var(--theme-color) !important;
   }
 
@@ -202,16 +207,13 @@
 
   /* END */
 
-
-
-
   /* *****************Table START******************** */
   .css-1hoqul-MuiPaper-root {
     border-radius: 0 !important;
   }
 
   /* Mui Table Header */
-  .shadow .MuiPaper-elevation>.MuiBox-root {
+  .shadow .MuiPaper-elevation > .MuiBox-root {
     @apply dark:bg-[#242930];
   }
 
@@ -221,12 +223,14 @@
   }
 
   /* Mui box root */
-  .MuiTableHead-root .MuiTableCell-head>.MuiBox-root {
+  .MuiTableHead-root .MuiTableCell-head > .MuiBox-root {
     @apply dark:text-[#ecf0f1] text-black;
   }
 
   /* Mui table label bg */
-  .MuiTableHead-root .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root .MuiSvgIcon-root {
+  .MuiTableHead-root
+    .css-1a3u37w-MuiButtonBase-root-MuiIconButton-root
+    .MuiSvgIcon-root {
     @apply dark:text-[#ecf0f1] text-black;
   }
 
@@ -244,8 +248,6 @@
   .MuiTableBody-root .MuiTableCell-body {
     @apply dark:text-[#ffffff] text-black;
   }
-
-
 
   /* *****************Table End******************** */
 
@@ -265,4 +267,8 @@
   .dark {
     --dark-background: #0b131c;
   }
+}
+
+.css-cmpglg-MuiFormControl-root-MuiTextField-root {
+  min-width: 270px !important;
 }

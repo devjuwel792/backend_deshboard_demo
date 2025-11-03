@@ -1,8 +1,8 @@
 import Sidebar from "@/Components/common/Sidebar/Sidebar";
-import SubLayout from "@/Layout/SubLayout";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ClientProviders from "./ClientProviders";
 import "./globals.css";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 // import Footer from "@/Components/common/Footer/Footer";
 // import Navbar from "@/Components/common/Navbar/Navbar";
 
@@ -27,13 +27,10 @@ export default function RootLayout({ children }) {
       <body
         className={` antialiased flex max-w-[1920px] mx-auto dark:bg-background bg-lightBg`}
       >
-        <SubLayout>
-          <Sidebar>
-            {children}
-          </Sidebar>
+        <ClientProviders>
+          <Sidebar>{children}</Sidebar>
           <ToastContainer />
-
-        </SubLayout>
+        </ClientProviders>
       </body>
     </html>
   );
