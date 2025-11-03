@@ -53,13 +53,13 @@ const MaterialTable = ({
                 <TableCell>
                   <button
                     onClick={() => onUpdate && onUpdate(row)}
-                    className="text-blue-500 hover:text-blue-700 mr-2"
+                    className="text-blue-500 hover:text-blue-700 mr-2 cursor-pointer"
                   >
                     <CiEdit size={20} />
                   </button>
                   <button
                     onClick={() => onDelete && onDelete(row.id)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
                   >
                     <RiDeleteBin5Line size={20} />
                   </button>
