@@ -4,6 +4,7 @@ import { CiEdit } from 'react-icons/ci';
 import { RiDeleteBin5Line } from "react-icons/ri";
 
 const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDelete, onUpdate, title }) => {
+    console.log("🚀 ~ MaterialTable ~ data:", data)
     // Placeholder: Material UI has been uninstalled. Replace with a basic table implementation.
 
     return (
@@ -26,7 +27,7 @@ const MaterialTable = ({ data, columns, isLoading, onPagination, onSearch, onDel
                         </tr>
                     </thead>
                     <tbody>
-                        {data.data.map((row, rowIndex) => (
+                        {data?.data?.map((row, rowIndex) => (
                             <tr key={row.id || rowIndex} className="hover:bg-gray-50">
                                 {columns.map((col, colIndex) => (
                                     <td key={colIndex} className="border border-gray-300 px-4 py-2">

@@ -68,6 +68,7 @@ export default function CategoriesPage() {
     page,
     limit: 10,
   });
+  console.log("🚀 ~ CategoriesPage ~ categoriesData:", categoriesData)
 
   const [createCategory] = useCreateCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
@@ -142,7 +143,7 @@ export default function CategoriesPage() {
         <Button onClick={handleAddNew}>Add New Category</Button>
       </div>
       <MaterialTable
-        data={categoriesData}
+        data={categoriesData?.data || []}
         columns={columns}
         isLoading={isLoading}
         title="Categories"
