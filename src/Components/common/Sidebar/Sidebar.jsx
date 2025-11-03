@@ -83,17 +83,11 @@ const Sidebar = ({ children }) => {
                 </div>
             </div>
 
-            <div className={`${sidebarPosition} w-full duration-500 transition-all`}>
-                <div className='flex flex-col justify-between min-h-[calc(100vh-64px)]'>
-                    <div>
-                        <Navbar toggleSidebar={handleToggleSidebar} />
-                        <div className="overflow-scroll dark:bg-background bg-lightBg p-[30px]">
-                            {children}
-                        </div>
-                    </div>
-
+            <div className={`${sidebarPosition} w-full duration-500 transition-all min-h-screen flex flex-col`}>
+                <Navbar toggleSidebar={handleToggleSidebar} />
+                <div className="flex-1 overflow-scroll dark:bg-background bg-lightBg p-[30px]">
+                    {children}
                 </div>
-
                 <Footer />
             </div>
         </>

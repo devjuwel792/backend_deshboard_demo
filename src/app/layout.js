@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={` antialiased flex max-w-[1920px] mx-auto dark:bg-background bg-lightBg`}
+        className={` antialiased flex max-w-[1920px] mx-auto dark:bg-background bg-lightBg min-h-screen`}
       >
         <ClientProviders>
           <Sidebar>{children}</Sidebar>

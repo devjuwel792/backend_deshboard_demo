@@ -33,7 +33,7 @@ const Navbar = ({ toggleSidebar }) => {
     const handleThemeToggle = () => dispatch(toggleTheme());
     console.log("toggleSidebar", toggleSidebar)
     return (
-        <div className="flex items-center justify-between xl:p-[30px] lg:p-[26px] md:p-[22px] p-4 bg-white dark:bg-darkGray">
+        <div className="sticky top-0 z-10 flex items-center justify-between xl:p-[30px] lg:p-[26px] md:p-[22px] p-4 bg-white dark:bg-darkGray">
 
 
             {/* <div className="flex items-center"> */}
