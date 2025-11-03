@@ -1,0 +1,29 @@
+export const bn = {
+    translation: {
+        common: {
+            welcome: "স্বাগতম",
+            dashboard: "ড্যাশবোর্ড",
+            settings: "সেটিংস",
+            profile: "প্রোফাইল",
+            logout: "লগ আউট",
+            "add-product": "পণ্য যোগ করুন",
+            category: "ক্যাটাগরি",
+            color: "রং",
+            sizes: "আকার",
+            orders: "অর্ডার",
+            "all-orders": "সমস্ত অর্ডার",
+            "order-item": "অর্ডার আইটেম",
+            reviews: "রিভিউ",
+            users: "ব্যবহারকারী",
+            cart: "কার্ট",
+            address: "ঠিকানা",
+            payment: "পেমেন্ট"
+        },
+        auth: {
+            login: "লগইন",
+            register: "রেজিস্টার",
+            email: "ইমেইল",
+            password: "পাসওয়ার্ড"
+        }
+    }
+};

@@ -8,6 +8,7 @@ import { toggleSidebar } from '@/Helper/Redux/features/sidebar/sidebarSlice';
 import Footer from '../Footer/Footer';
 import Navbar from '../Navbar/Navbar';
 import SubmenuSidebarItem from '../SidebarSubMenu/SubmenuSidebarItem';
+import { useTranslation } from 'react-i18next';
 // import SubmenuSidebarItem from '../SubmenuSidebar/SubmenuSidebarItem';
 // import { menu } from '@/data/Sidebar';
 

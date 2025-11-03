@@ -11,6 +11,7 @@ import HoverOutlineButton from "@/Components/ui/HoverOutlineButton/HoverOutlineB
 import SearchInput from "@/Components/ui/SearchInput/SearchInput";
 import { useDispatch } from 'react-redux';
 import { toggleSidebar } from '@/Helper/Redux/features/sidebar/sidebarSlice';
+import { useTranslation } from 'react-i18next';
 
 const items = [
     { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
@@ -21,7 +22,12 @@ const items = [
 
 const Navbar = ({ toggleSidebar }) => {
     const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
     const handleToggleSidebar = () => dispatch(toggleSidebar());
+    const handleLanguageChange = () => {
+        const newLang = i18n.language === 'en' ? 'bn' : 'en';
+        i18n.changeLanguage(newLang);
+    };
     console.log("toggleSidebar", toggleSidebar)
     return (
         <div className="flex items-center justify-between xl:p-[30px] lg:p-[26px] md:p-[22px] p-4 bg-white dark:bg-darkGray">
@@ -66,14 +72,12 @@ const Navbar = ({ toggleSidebar }) => {
                         </div>
                     </div>
 
-                    {/* Functional SVG BUTTONS */}
-                    <div className="cursor-pointer flex">
+                    {/* Language Toggle Button */}
+                    <div className="cursor-pointer flex" onClick={handleLanguageChange}>
                         <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.5 10L22.9 21H20.745L19.544 18H15.454L14.255 21H12.101L16.5 10H18.5ZM10 2V4H16V6L14.0322 6.0006C13.2425 8.36616 11.9988 10.5057 10.4115 12.301C11.1344 12.9457 11.917 13.5176 12.7475 14.0079L11.9969 15.8855C10.9237 15.2781 9.91944 14.5524 8.99961 13.7249C7.21403 15.332 5.10914 16.5553 2.79891 17.2734L2.26257 15.3442C4.2385 14.7203 6.04543 13.6737 7.59042 12.3021C6.46277 11.0281 5.50873 9.57985 4.76742 8.00028L7.00684 8.00037C7.57018 9.03885 8.23979 10.0033 8.99967 10.877C10.2283 9.46508 11.2205 7.81616 11.9095 6.00101L2 6V4H8V2H10ZM17.5 12.8852L16.253 16H18.745L17.5 12.8852Z"></path>
                         </svg>
-                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="down-arrow" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.9997 13.1714L16.9495 8.22168L18.3637 9.63589L11.9997 15.9999L5.63574 9.63589L7.04996 8.22168L11.9997 13.1714Z"></path>
-                        </svg>
+                        <span className="ml-1 text-sm">{i18n.language === 'en' ? 'EN' : 'BN'}</span>
                     </div>
 
                     <div className="cursor-pointer relative">

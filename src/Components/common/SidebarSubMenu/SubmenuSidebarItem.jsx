@@ -3,9 +3,11 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SubmenuSidebarItem = ({ item, actualWidth, forceClose = false }) => {
     const pathname = usePathname();
+    const { t } = useTranslation();
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
     const isActive = pathname === item.href;
 
@@ -37,7 +39,7 @@ const SubmenuSidebarItem = ({ item, actualWidth, forceClose = false }) => {
                         ${isActive ? 'bg-[#2b333b] text-secondary-orange' : 'hover:bg-[#334155]'}`}
                 >
                     <span className="text-lg">{item.icon}</span>
-                    <span className={`text-[15px] line-clamp-1 ${!actualWidth ? 'hidden' : ''}`}>{item.label}</span>
+                    <span className={`text-[15px] line-clamp-1 ${!actualWidth ? 'hidden' : ''}`}>{t(`common.${item.label.toLowerCase().replace(/\s+/g, '-')}`)}</span>
                     <span className={`${actualWidth ? "" : "hidden"}`}>
                         {!isSubmenuOpen ? (
                             <ChevronDown size={18} aria-hidden="true" />
@@ -76,7 +78,7 @@ const SubmenuSidebarItem = ({ item, actualWidth, forceClose = false }) => {
                 ${isActive ? 'bg-[#2b333b] text-secondary-orange' : 'hover:bg-[#334155]'}`}
         >
             <span className="text-lg">{item.icon}</span>
-            <span className={`text-[15px] line-clamp-1 ${!actualWidth ? 'hidden' : ''}`}>{item.label}</span>
+            <span className={`text-[15px] line-clamp-1 ${!actualWidth ? 'hidden' : ''}`}>{t(`common.${item.label.toLowerCase().replace(/\s+/g, '-')}`)}</span>
         </Link>
     );
 };
