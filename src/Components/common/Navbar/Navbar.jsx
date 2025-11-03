@@ -9,8 +9,9 @@ import {
 import Dropdown from "@/Components/ui/Dropdown/Dropdown";
 import HoverOutlineButton from "@/Components/ui/HoverOutlineButton/HoverOutlineButton";
 import SearchInput from "@/Components/ui/SearchInput/SearchInput";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '@/Helper/Redux/features/sidebar/sidebarSlice';
+import { toggleTheme } from '@/Helper/Redux/features/theme/themeSlice';
 import { useTranslation } from 'react-i18next';
 
 const items = [
@@ -23,11 +24,13 @@ const items = [
 const Navbar = ({ toggleSidebar }) => {
     const dispatch = useDispatch();
     const { t, i18n } = useTranslation();
+    const isDarkMode = useSelector((state) => state.theme.isDarkMode);
     const handleToggleSidebar = () => dispatch(toggleSidebar());
     const handleLanguageChange = () => {
         const newLang = i18n.language === 'en' ? 'bn' : 'en';
         i18n.changeLanguage(newLang);
     };
+    const handleThemeToggle = () => dispatch(toggleTheme());
     console.log("toggleSidebar", toggleSidebar)
     return (
         <div className="flex items-center justify-between xl:p-[30px] lg:p-[26px] md:p-[22px] p-4 bg-white dark:bg-darkGray">
@@ -86,10 +89,16 @@ const Navbar = ({ toggleSidebar }) => {
                         </svg>
                     </div>
 
-                    <div className="cursor-pointer">
-                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="ri-moon-line" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z"></path>
-                        </svg>
+                    <div className="cursor-pointer" onClick={handleThemeToggle}>
+                        {isDarkMode ? (
+                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
+                            </svg>
+                        ) : (
+                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="ri-moon-line" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z"></path>
+                            </svg>
+                        )}
                     </div>
 
                     {/* Profile dropdown */}
