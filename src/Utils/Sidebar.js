@@ -27,7 +27,7 @@ export const menu = [
     {
         icon: <Megaphone size={16} />,
         label: "Category",
-        href: "/category",
+        href: "/categories",
     },
     {
         icon: <Megaphone size={16} />,
