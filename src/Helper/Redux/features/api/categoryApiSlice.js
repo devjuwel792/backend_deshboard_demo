@@ -18,11 +18,18 @@ const categoryApiSlice = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'Categories', id }],
     }),
     createCategory: builder.mutation({
-      query: (category) => ({
-        url: '/create-category',
-        method: 'POST',
-        body: category,
-      }),
+      query: (categoryData) => {
+        const formData = new FormData();
+        formData.append('name', categoryData.name);
+        if (categoryData.image) {
+          formData.append('image', categoryData.image);
+        }
+        return {
+          url: '/create-category',
+          method: 'POST',
+          body: formData,
+        };
+      },
       invalidatesTags: ['Categories'],
     }),
     updateCategory: builder.mutation({

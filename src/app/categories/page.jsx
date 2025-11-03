@@ -1,37 +1,33 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/Components/ui/button';
-import { Input } from '@/Components/ui/input';
+import React, { useState } from "react";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
 
-import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
+import MaterialTable from "@/Components/ui/MaterialTable/MaterialTable";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
-} from '@/Helper/Redux/features/api/categoryApiSlice';
+} from "@/Helper/Redux/features/api/categoryApiSlice";
 
 const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
-  const [name, setName] = useState(category?.name || '');
+  const [name, setName] = useState(category?.name || "");
   const [image, setImage] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('name', name);
-    // if (image) {
-    //   formData.append('image', image);
-    // }
-    onSave(formData);
-    setName('');
+
+    onSave({ name, image: image ? image : null });
+    setName("");
     setImage(null);
     onClose();
   };
@@ -40,7 +36,9 @@ const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{category ? 'Edit Category' : 'Add New Category'}</DialogTitle>
+          <DialogTitle>
+            {category ? "Edit Category" : "Add New Category"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -55,7 +53,7 @@ const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
               required
             />
           </div>
-          {/* <div>
+          <div>
             <label htmlFor="image" className="block text-sm font-medium mb-1">
               Category Image
             </label>
@@ -66,14 +64,12 @@ const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
               onChange={(e) => setImage(e.target.files[0])}
               required={!category}
             />
-          </div> */}
+          </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              {category ? 'Update' : 'Create'}
-            </Button>
+            <Button type="submit">{category ? "Update" : "Create"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -86,44 +82,51 @@ export default function CategoriesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
 
-  const { data: categoriesData, isLoading, error } = useGetCategoriesQuery({
+  const {
+    data: categoriesData,
+    isLoading,
+    error,
+  } = useGetCategoriesQuery({
     page,
     limit: 10,
   });
-  console.log("🚀 ~ CategoriesPage ~ categoriesData:", categoriesData)
+  console.log("🚀 ~ CategoriesPage ~ categoriesData:", categoriesData);
 
   const [createCategory] = useCreateCategoryMutation();
   const [updateCategory] = useUpdateCategoryMutation();
   const [deleteCategory] = useDeleteCategoryMutation();
 
   const columns = [
-    { header: 'ID', accessorKey: 'id' },
-    { header: 'Name', accessorKey: 'name' },
+    { header: "ID", accessorKey: "id" },
+    { header: "Name", accessorKey: "name" },
   ];
 
   const handleCreate = async (categoryData) => {
     try {
       await createCategory(categoryData).unwrap();
     } catch (error) {
-      console.error('Failed to create category:', error);
+      console.error("Failed to create category:", error);
     }
   };
 
   const handleUpdate = async (categoryData) => {
     try {
-      await updateCategory({ id: editingCategory.id, ...categoryData }).unwrap();
+      await updateCategory({
+        id: editingCategory.id,
+        ...categoryData,
+      }).unwrap();
       setEditingCategory(null);
     } catch (error) {
-      console.error('Failed to update category:', error);
+      console.error("Failed to update category:", error);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
+    if (window.confirm("Are you sure you want to delete this category?")) {
       try {
         await deleteCategory(id).unwrap();
       } catch (error) {
-        console.error('Failed to delete category:', error);
+        console.error("Failed to delete category:", error);
       }
     }
   };
@@ -153,7 +156,9 @@ export default function CategoriesPage() {
   if (error) {
     return (
       <div className="container mx-auto p-6">
-        <div className="text-red-500">Error loading categories: {error.message}</div>
+        <div className="text-red-500">
+          Error loading categories: {error.message}
+        </div>
       </div>
     );
   }
