@@ -21,10 +21,7 @@ const MaterialTable = ({
       <h2 className="mb-4 text-black dark:text-white font-bold lg:text-2xl md:text-xl sm:text-lg">
         {title}
       </h2>
-      <p className="text-gray-500">
-        Material UI table component has been removed. Please implement a custom
-        table here.
-      </p>
+      
       {isLoading && <p>Loading...</p>}
       {!isLoading && data && (
         <table className="min-w-full table-auto border-collapse border border-gray-300">
