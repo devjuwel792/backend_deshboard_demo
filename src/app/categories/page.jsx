@@ -21,11 +21,18 @@ import {
 
 const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
   const [name, setName] = useState(category?.name || '');
+  const [image, setImage] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ name });
+    const formData = new FormData();
+    formData.append('name', name);
+    // if (image) {
+    //   formData.append('image', image);
+    // }
+    onSave(formData);
     setName('');
+    setImage(null);
     onClose();
   };
 
@@ -48,6 +55,18 @@ const CategoryModal = ({ isOpen, onClose, category, onSave }) => {
               required
             />
           </div>
+          {/* <div>
+            <label htmlFor="image" className="block text-sm font-medium mb-1">
+              Category Image
+            </label>
+            <Input
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              required={!category}
+            />
+          </div> */}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
