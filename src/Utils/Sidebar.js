@@ -37,7 +37,7 @@ export const menu = [
     {
         icon: <Megaphone size={16} />,
         label: "Sizes",
-        href: "/size",
+        href: "/sizes",
     },
     {
         icon: <Users size={16} />,
