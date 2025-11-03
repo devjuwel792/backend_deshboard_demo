@@ -6,9 +6,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useLoginMutation } from '../../../Helper/Redux/features/api/apiSlice';
+import Cookies from 'js-cookie';
 
 const Login = () => {
     const router = useRouter()
+    const [login, { isLoading }] = useLoginMutation();
     const [email, setEmail] = useState('');
     const [text, setText] = useState('');
     const [password, setPassword] = useState('');
@@ -19,8 +22,35 @@ const Login = () => {
         password: ''
     });
 
-    const handleSubmit = async () => {
+    const validateForm = () => {
+        const newErrors = { email: '', password: '' };
+        if (!email) newErrors.email = 'Email is required';
+        if (!password) newErrors.password = 'Password is required';
+        setErrors(newErrors);
+        return !newErrors.email && !newErrors.password;
+    };
 
+    const handleSubmit = async () => {
+        if (!validateForm()) return;
+
+        try {
+            const result = await login({
+                email,
+                password,
+                rememberMe
+            }).unwrap();
+
+            // Assuming the response contains a token
+            if (result.token) {
+                Cookies.set('uat', result.token, { expires: rememberMe ? 30 : 1 }); // 30 days if remember me, else 1 day
+                router.push('/'); // Redirect to home or dashboard
+            } else {
+                setErrors({ email: '', password: 'Login failed. Please check your credentials.' });
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            setErrors({ email: '', password: 'Login failed. Please try again.' });
+        }
     }
 
     const togglePasswordVisibility = () => {
@@ -117,9 +147,10 @@ const Login = () => {
                         <Grid item xs={12}>
                             <button
                                 onClick={handleSubmit}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 text-sm font-bold uppercase tracking-wide"
+                                disabled={isLoading}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 text-sm font-bold uppercase tracking-wide disabled:opacity-50"
                             >
-                                Login
+                                {isLoading ? 'Logging in...' : 'Login'}
                             </button>
                         </Grid>
                     </Grid>
