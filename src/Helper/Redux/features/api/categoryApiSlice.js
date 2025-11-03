@@ -1,6 +1,7 @@
 import { apiSlice } from './apiSlice';
 
 const categoryApiSlice = apiSlice.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     // Categories endpoints
     getCategories: builder.query({
@@ -34,7 +35,7 @@ const categoryApiSlice = apiSlice.injectEndpoints({
     }),
     updateCategory: builder.mutation({
       query: ({ id, ...category }) => ({
-        url: `/categories/${id}`,
+        url: `/category-update/${id}`,
         method: 'PUT',
         body: category,
       }),
@@ -45,7 +46,7 @@ const categoryApiSlice = apiSlice.injectEndpoints({
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
-        url: `/categories/${id}`,
+        url: `/delete-category/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Categories'],
