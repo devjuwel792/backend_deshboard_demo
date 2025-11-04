@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 
 const getInitialTheme = () => {
     if (typeof window != 'undefined') {
-        const savedTheme = localStorage.getItem('theme');
+        const savedTheme = Cookies.get('theme');
         if (savedTheme) {
             return savedTheme === 'dark';
         }
@@ -23,13 +24,13 @@ const themeSlice = createSlice({
         toggleTheme: (state) => {
             state.isDarkMode = !state.isDarkMode;
             const newTheme = state.isDarkMode ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
+            Cookies.set('theme', newTheme, { expires: 365 });
             document.documentElement.classList.toggle('dark', state.isDarkMode);
         },
         setTheme: (state, action) => {
             state.isDarkMode = action.payload;
             const theme = action.payload ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
+            Cookies.set('theme', theme, { expires: 365 });
             document.documentElement.classList.toggle('dark', action.payload);
         },
     },
