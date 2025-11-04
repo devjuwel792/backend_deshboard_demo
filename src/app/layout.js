@@ -1,6 +1,5 @@
 import Sidebar from "@/Components/common/Sidebar/Sidebar";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Toaster from "@/Components/ui/Toaster/Toaster";
 import ClientProviders from "./ClientProviders";
 import "./globals.css";
 // import Footer from "@/Components/common/Footer/Footer";
@@ -28,9 +27,9 @@ export default function RootLayout({ children }) {
         className={` antialiased flex max-w-[1920px] mx-auto dark:bg-background bg-lightBg min-h-screen`}
       >
         <ClientProviders>
-          
+
           <Sidebar>{children}</Sidebar>
-          <ToastContainer />
+          <Toaster />
         </ClientProviders>
       </body>
     </html>

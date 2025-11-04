@@ -22,10 +22,19 @@ const productApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Products'],
     }),
+    createProduct: builder.mutation({
+      query: (productData) => ({
+        url: '/create-product',
+        method: 'POST',
+        body: productData,
+      }),
+      invalidatesTags: ['Products'],
+    }),
   }),
 });
 
 export const {
   useGetProductsQuery,
   useDeleteProductMutation,
+  useCreateProductMutation,
 } = productApiSlice;

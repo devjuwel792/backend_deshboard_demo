@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import {
@@ -80,6 +81,9 @@ export default function ProductsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Products</h1>
         <div className="flex gap-4">
+          <Link href="/add-product">
+            <Button variant="default">Add Product</Button>
+          </Link>
           <Input
             placeholder="Search products..."
             value={searchText}

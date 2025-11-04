@@ -112,13 +112,13 @@ export default function SizesPage() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this size?")) {
+   
       try {
         await deleteSize(id).unwrap();
       } catch (error) {
         console.error("Failed to delete size:", error);
       }
-    }
+    
   };
 
   const handleSave = (sizeData) => {

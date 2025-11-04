@@ -112,13 +112,13 @@ export default function ColorsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this color?")) {
+   
       try {
         await deleteColor(id).unwrap();
       } catch (error) {
         console.error("Failed to delete color:", error);
       }
-    }
+    
   };
 
   const handleSave = (colorData) => {
