@@ -9,6 +9,7 @@ import { useCreateProductMutation } from "@/Helper/Redux/features/api/productApi
 import { useGetCategoriesQuery } from "@/Helper/Redux/features/api/categoryApiSlice";
 import { useGetColorsQuery } from "@/Helper/Redux/features/api/colorApiSlice";
 import { useGetSizesQuery } from "@/Helper/Redux/features/api/sizeApiSlice";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Select from "react-select";
 
@@ -17,6 +18,7 @@ export default function AddProductPage() {
   const { data: categories } = useGetCategoriesQuery();
   const { data: colors } = useGetColorsQuery();
   const { data: sizes } = useGetSizesQuery();
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
 
   const [formData, setFormData] = useState({
     Name: "",
@@ -141,6 +143,57 @@ export default function AddProductPage() {
                 onChange={(selectedOptions) => handleMultiSelect("CategoryId", selectedOptions?.map(option => option.value) || [])}
                 placeholder="Select categories"
                 className="w-full"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                    borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                    '&:hover': {
+                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                    },
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? isDarkMode ? '#4b5563' : '#e5e7eb'
+                      : state.isFocused
+                      ? isDarkMode ? '#4b5563' : '#f3f4f6'
+                      : isDarkMode ? '#374151' : '#ffffff',
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                  }),
+                  multiValueLabel: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                  multiValueRemove: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                    '&:hover': {
+                      backgroundColor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    },
+                  }),
+                  input: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                }}
               />
             </div>
 
