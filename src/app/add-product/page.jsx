@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCreateProductMutation } from "@/Helper/Redux/features/api/productApiSlice";
 import { useGetCategoriesQuery } from "@/Helper/Redux/features/api/categoryApiSlice";
 import { useGetColorsQuery } from "@/Helper/Redux/features/api/colorApiSlice";
 import { useGetSizesQuery } from "@/Helper/Redux/features/api/sizeApiSlice";
 import { toast } from "react-toastify";
+import Select from "react-select";
 
 export default function AddProductPage() {
   const [createProduct] = useCreateProductMutation();
@@ -75,7 +75,7 @@ export default function AddProductPage() {
         Price: parseFloat(formData.Price),
         DiscountPrice: parseFloat(formData.DiscountPrice),
         Rating: parseFloat(formData.Rating),
-        CategoryId: parseInt(formData.CategoryId),
+        CategoryId: formData.CategoryId.length > 0 ? formData.CategoryId.map(id => parseInt(id)) : [],
         SizeIds: formData.SizeIds.map((id) => parseInt(id)),
         ColorIds: formData.ColorIds.map((id) => parseInt(id)),
       };
@@ -84,7 +84,7 @@ export default function AddProductPage() {
       // Reset form
       setFormData({
         Name: "",
-        CategoryId: "",
+        CategoryId: [],
         Price: "",
         DiscountPrice: "",
         Rating: "",
@@ -132,18 +132,16 @@ export default function AddProductPage() {
               <label htmlFor="CategoryId" className="text-sm font-medium">
                 Category
               </label>
-              <Select onValueChange={(value) => handleSelectChange("CategoryId", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories?.data?.map((category) => (
-                    <SelectItem key={category.id} value={category.id.toString()}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Select
+                isMulti
+                options={categories?.data?.data?.map((category) => ({
+                  value: category.id,
+                  label: category.name,
+                }))}
+                onChange={(selectedOptions) => handleMultiSelect("CategoryId", selectedOptions?.map(option => option.value) || [])}
+                placeholder="Select categories"
+                className="w-full"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
