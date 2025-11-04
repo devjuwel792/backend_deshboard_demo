@@ -41,12 +41,12 @@ const Sidebar = ({ children }) => {
     return (
         <>
             <div className="h-screen z-100">
-                <div className={`${isOpen ? "h-[100vh] w-[100vw]" : "lg:h-0 lg:w-0"} fixed bg-amber-700 top-0 left-0 z-99 opacity-0`} onClick={handleToggleSidebar}></div>
+                <div className={`${isOpen ? "h-[100vh] w-[100vw] lg:h-0 lg:w-0" : "lg:h-0 lg:w-0"} fixed bg-amber-700 top-0 left-0 z-99 opacity-0`} onClick={handleToggleSidebar}></div>
 
             <div
                 onMouseEnter={() => !isOpen && setIsHovered(true)}
                 onMouseLeave={() => !isOpen && setIsHovered(false)}
-                className={`elegant-scroll transition-all duration-700 ${sidebarWidth} lg:block fixed overflow-y-auto h-screen bg-lightBlack bg-gradient-to-b dark:from-gradientBlackLight dark:to-gradientBlackDark`}
+                className={`elegant-scroll transition-all duration-700 ${sidebarWidth} lg:block fixed overflow-y-auto h-screen bg-lightBlack bg-gradient-to-b dark:from-gradientBlackLight dark:to-gradientBlackDark z-100`}
             >
                 <div className="text-sm text-white flex flex-col gap-1 p-4">
                     <div className={`flex items-center ${!actualWidth ? "justify-center" : "justify-between"}`}>
