@@ -3,9 +3,21 @@
 import React, { useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog";
+import { toast } from "react-toastify";
 
 import MaterialTable from "@/Components/ui/MaterialTable/MaterialTable";
-import { useGetProductsQuery } from "@/Helper/Redux/features/api/productApiSlice";
+import { useGetProductsQuery, useDeleteProductMutation } from "@/Helper/Redux/features/api/productApiSlice";
 
 export default function ProductsPage() {
   const [page, setPage] = useState(1);
@@ -20,6 +32,8 @@ export default function ProductsPage() {
     pageIndex: page - 1,
     searchText,
   });
+
+  const [deleteProduct] = useDeleteProductMutation();
 
   console.log("🚀 ~ ProductsPage ~ productsData:", productsData);
 
@@ -39,6 +53,16 @@ export default function ProductsPage() {
 
   const handlePagination = (newPage) => {
     setPage(newPage);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteProduct(id).unwrap();
+      toast.success('Product deleted successfully!');
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      toast.error('Failed to delete product. Please try again.');
+    }
   };
 
   if (error) {
@@ -70,6 +94,7 @@ export default function ProductsPage() {
         isLoading={isLoading}
         title="Products"
         onPagination={handlePagination}
+        onDelete={handleDelete}
       />
     </div>
   );

@@ -1,5 +1,8 @@
-# TODO List for Login System Implementation
-
-- [x] Add login mutation to apiSlice.js
-- [x] Update Login.jsx to handle form submission and authentication
-- [ ] Test login functionality
+- [x] Add deleteProduct mutation to productApiSlice.js
+- [x] Export useDeleteProductMutation hook
+- [x] Import useDeleteProductMutation in products page
+- [x] Add handleDelete function in products page
+- [x] Pass onDelete prop to MaterialTable in products page
+- [ ] Test the delete functionality in the products page
+- [ ] Add confirmation dialog before deleting (optional enhancement)
+- [ ] Add success/error toast notifications (optional enhancement)
