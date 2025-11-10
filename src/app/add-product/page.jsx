@@ -69,6 +69,14 @@ export default function AddProductPage() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData((prev) => ({
+      ...prev,
+      ProductImages: files,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -415,6 +423,20 @@ export default function AddProductPage() {
                 value={formData.ProductDetail.Material}
                 onChange={handleInputChange}
                 placeholder="Enter material"
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="ProductImages" className="text-sm font-medium">
+                Product Images
+              </label>
+              <Input
+                id="ProductImages"
+                name="ProductImages"
+                type="file"
+                multiple
+                onChange={handleFileChange}
                 className="w-full"
               />
             </div>
