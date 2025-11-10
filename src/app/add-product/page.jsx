@@ -22,7 +22,7 @@ export default function AddProductPage() {
 
   const [formData, setFormData] = useState({
     Name: "",
-    CategoryId: "",
+    CategoryId: [],
     Price: "",
     DiscountPrice: "",
     Rating: "",
@@ -72,16 +72,24 @@ export default function AddProductPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const productData = {
-        ...formData,
-        Price: parseFloat(formData.Price),
-        DiscountPrice: parseFloat(formData.DiscountPrice),
-        Rating: parseFloat(formData.Rating),
-        CategoryId: formData.CategoryId.length > 0 ? formData.CategoryId.map(id => parseInt(id)) : [],
-        SizeIds: formData.SizeIds.map((id) => parseInt(id)),
-        ColorIds: formData.ColorIds.map((id) => parseInt(id)),
-      };
-      await createProduct(productData).unwrap();
+      const formDataObj = new FormData();
+      formDataObj.append("Name", formData.Name);
+      formDataObj.append("Price", parseFloat(formData.Price));
+      formDataObj.append("DiscountPrice", parseFloat(formData.DiscountPrice));
+      formDataObj.append("Rating", parseFloat(formData.Rating));
+      formDataObj.append("ProductDetail.Description", formData.ProductDetail.Description);
+      formDataObj.append("ProductDetail.Material", formData.ProductDetail.Material);
+      formDataObj.append("ProductDetail.Id", formData.ProductDetail.Id);
+
+      // Append arrays
+      formData.CategoryId.forEach(id => formDataObj.append("CategoryId", parseInt(id)));
+      formData.SizeIds.forEach(id => formDataObj.append("SizeIds", parseInt(id)));
+      formData.ColorIds.forEach(id => formDataObj.append("ColorIds", parseInt(id)));
+
+      // ProductImages if any
+      formData.ProductImages.forEach(image => formDataObj.append("ProductImages", image));
+
+      await createProduct(formDataObj).unwrap();
       toast.success("Product created successfully!");
       // Reset form
       setFormData({
@@ -209,6 +217,73 @@ export default function AddProductPage() {
                 }))}
                 onChange={(selectedOptions) => handleMultiSelect("ColorIds", selectedOptions?.map(option => option.value) || [])}
                 placeholder="Select colors"
+                className="w-full"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                    borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                    '&:hover': {
+                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                    },
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? isDarkMode ? '#4b5563' : '#e5e7eb'
+                      : state.isFocused
+                      ? isDarkMode ? '#4b5563' : '#f3f4f6'
+                      : isDarkMode ? '#374151' : '#ffffff',
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                  }),
+                  multiValueLabel: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                  multiValueRemove: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                    '&:hover': {
+                      backgroundColor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    },
+                  }),
+                  input: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                  }),
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="SizeIds" className="text-sm font-medium">
+                Sizes
+              </label>
+              <Select
+                isMulti
+                options={sizes?.data?.data?.map((size) => ({
+                  value: size.id,
+                  label: size.name,
+                }))}
+                onChange={(selectedOptions) => handleMultiSelect("SizeIds", selectedOptions?.map(option => option.value) || [])}
+                placeholder="Select sizes"
                 className="w-full"
                 styles={{
                   control: (provided, state) => ({

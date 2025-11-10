@@ -2,15 +2,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 const getInitialTheme = () => {
-    if (typeof window != 'undefined') {
+
         const savedTheme = Cookies.get('theme');
         if (savedTheme) {
             return savedTheme === 'dark';
         }
         // Default to light mode if no preference saved
         return false;
-    }
-    return false;
+    
+ 
 };
 
 const initialState = {
