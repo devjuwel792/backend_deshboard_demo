@@ -1,611 +1,545 @@
-'use client'
-import Title from '@/Components/common/Title/Title';
-import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
-import { categoryDropdown, colorDropdown, createProduct, deleteProduct, getProduct, updateCategory, updateProduct } from '@/Utils/API/data';
-import { sizeDropdown } from '@/Utils/API/size';
-import { Grid, TextField, Box, Paper, Autocomplete, Button, Typography } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+"use client";
 
-const page = () => {
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useCreateProductMutation } from "@/Helper/Redux/features/api/productApiSlice";
+import { useGetCategoriesQuery } from "@/Helper/Redux/features/api/categoryApiSlice";
+import { useGetColorsQuery } from "@/Helper/Redux/features/api/colorApiSlice";
+import { useGetSizesQuery } from "@/Helper/Redux/features/api/sizeApiSlice";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import Select from "react-select";
 
-    const [pageSize, setPageSize] = React.useState(10);
-    const [pageIndex, setPageIndex] = React.useState(0);
-    const [searchText, setSearchText] = React.useState("");
+export default function AddProductPage() {
+  const [createProduct] = useCreateProductMutation();
+  const { data: categories } = useGetCategoriesQuery();
+  const { data: colors } = useGetColorsQuery();
+  const { data: sizes } = useGetSizesQuery();
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
 
-    const [selectedColor, setSelectedColor] = useState([])
-    const [colors, setColors] = useState([])
-    const [colorLoading, setColorLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    Name: "",
+    CategoryId: [],
+    Price: "",
+    DiscountPrice: "",
+    Rating: "",
+    ProductDetail: {
+      Description: "",
+      Material: "",
+      Id: 1,
+    },
+    ProductImages: [],
+    FeatureImage: null,
+    SizeIds: [],
+    ColorIds: [],
+  });
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [categories, setCategories] = useState([]);
-    const [categoryLoading, setCategoryLoading] = useState(false);
-
-    const [selectedSize, setSelectedSize] = useState([])
-    const [size, setSize] = useState([])
-    const [sizeLoading, setSizeLoading] = useState(false)
-
-    const [images, setImages] = useState([]);
-    const fileInputRef = useRef(null);
-
-    const [preview, setPreview] = useState(null);
-
-    const [products, setProducts] = useState(null)
-    const [isLoading, setIsLoading] = useState(false)
-
-    const [productName, setProductName] = useState("")
-    const [productPrice, setProductPrice] = useState(0)
-    const [productDiscountPridce, setProductDiscountPrice] = useState(0)
-    const [productRating, setProductRating] = useState(0)
-    const [productMaterial, setProductMaterial] = useState("")
-    const [productDetails, setProductDetails] = useState("")
-    const [selectedProduct, setSelectedProduct] = useState(null)
-    const [post, setPost] = useState(true)
-
-
-    const handlePageChange = (pagination) => {
-        setPageIndex(pagination?.pageIndex || 0);
-        setPageSize(pagination?.pageSize || 10);
-    }
-    const handleGlobalSearch = (searchText) => {
-        setSearchText(searchText || "");
-    }
-
-    const fetchSizes = async (search = " ") => {
-        setSizeLoading(true)
-        const result = await sizeDropdown(search)
-        if (result?.success) {
-            setSize(result?.data)
-        }
-        setSizeLoading(false)
-    }
-
-    const fetchColors = async (search = "") => {
-        setColorLoading(true);
-        const result = await colorDropdown(search)
-        console.log(result);
-        if (result?.success) {
-            setColors(result?.data);
-        }
-        setColorLoading(false);
-    };
-
-    const fetchCategories = async (search = "") => {
-        setCategoryLoading(true)
-        const result = await categoryDropdown(search)
-        if (result?.success) {
-            setCategories(result?.data)
-        }
-        setCategoryLoading(false)
-    }
-
-    const handleAvatarClick = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        const newImages = files.map((file) => ({
-            file,
-            preview: URL.createObjectURL(file),
-        }));
-        setImages((prev) => [...prev, ...newImages]);
-    };
-
-    const handleRemoveImage = (index) => {
-        // Revoke the object URL to free memory
-        URL.revokeObjectURL(images[index].preview);
-        setImages((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    useEffect(() => {
-        return () => {
-            images.forEach((img) => URL.revokeObjectURL(img.preview));
-        };
-    }, [images]);
-
-    const fetchProduct = async () => {
-
-
-        setIsLoading(true);
-        const result = await getProduct({
-            pageSize: pageSize,
-            pageIndex: pageIndex,
-            searchText: searchText,
-        });
-
-        if (result?.success) {
-            setProducts(result.data);
-
-        }
-        setIsLoading(false);
-
-    }
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this product?");
-        if (!confirmDelete) return;
-        const result = await deleteProduct(id);
-        if (result?.success) {
-            toast.success("Product deleted successfully!");
-            fetchProduct();
-        } else {
-            toast.error("Failed to delete product.");
-        }
-    }
-    const handleCreate = async () => {
-        // Form validation
-        if (!productName.trim()) {
-            toast.error("Product name is required.");
-            return;
-        }
-        if (!selectedCategory) {
-            toast.error("Category is required.");
-            return;
-        }
-        if (productPrice <= 0) {
-            toast.error("Price must be greater than 0.");
-            return;
-        }
-        if (productDiscountPridce < 0) {
-            toast.error("Discount price cannot be negative.");
-            return;
-        }
-        if (productRating < 0 || productRating > 5) {
-            toast.error("Rating must be between 0 and 5.");
-            return;
-        }
-        if (!productDetails.trim()) {
-            toast.error("Product details are required.");
-            return;
-        }
-        if (!productMaterial.trim()) {
-            toast.error("Product material is required.");
-            return;
-        }
-        if (selectedColor.length === 0) {
-            toast.error("At least one color must be selected.");
-            return;
-        }
-        if (selectedSize.length === 0) {
-            toast.error("At least one size must be selected.");
-            return;
-        }
-
-        const result = await createProduct(
-            {
-
-                name: productName,
-                categoryId: selectedCategory?.id,
-                price: productPrice,
-                discountPrice: productDiscountPridce,
-                rating: productRating,
-                productDetail: {
-
-                    description: productDetails,
-                    material: productMaterial
-                },
-                productImages: images.map((img, index) => ({
-                    id: index,
-                    image: img.file.name,
-                    imageUrl: img.preview,
-                    imageType: img.file.type,
-                    productId: 0
-                })),
-                sizeIds: selectedSize.map((value) => value.id),
-                colorIds: selectedColor.map((value) => value.id)
-            }
-
-        )
-
-        if (result?.success) {
-            toast.success("Product added successfully!");
-            fetchProduct()
-        } else {
-            toast.error("Failed to add product.");
-        }
-    }
-    const handleUpdate = async () => {
-        const result = await updateProduct(selectedProduct.id,
-            {
-                id: selectedProduct.id,
-                name: productName,
-                categoryId: selectedCategory?.id,
-                price: productPrice,
-                discountPrice: productDiscountPridce,
-                rating: productRating,
-                productDetail: {
-
-                    description: productDetails,
-                    material: productMaterial
-                },
-                // "productImages": [
-                //     {
-                //         "id": 0,
-                //         "image": "string",
-                //         "imageUrl": "string",
-                //         "imageType": "string",
-                //         "productId": 0
-                //     }
-                // ],
-                sizeIds: selectedSize.map((value) => value.id),
-                colorIds: selectedColor.map((value) => value.id)
-            }
-
-        )
-
-        if (result?.success) {
-            toast.success("Product updated successfully!");
-            fetchProduct()
-            setPost(true)
-
-        } else {
-            toast.error("Failed to update product.");
-        }
-
-
-    }
-    const getProductData = (data) => {
-        if (data) {
-            setPost(false)
-            setProductName(data.name)
-            setProductPrice(data.price)
-            setProductDiscountPrice(data.discountPrice)
-            setProductRating(data.rating)
-            setProductMaterial(data.productDetail.description)
-            setProductDetails(data.productDetail.material)
-            setSelectedCategory(data.category)
-            setSelectedColor(data.productColors)
-            setSelectedSize(data.productSizes)
-            setSelectedProduct(data)
-        }
-
-        console.log("🚀 ~ getProductData ~ data:", data)
-
-    }
-
-
-    useEffect(() => {
-        fetchCategories()
-        fetchColors()
-        fetchSizes()
-
-    }, [])
-
-    useEffect(() => {
-        fetchProduct();
-    }, [pageIndex, pageSize, searchText]);
-
-    const Column = [
-        { accessorKey: 'name', header: 'Name' },
-        { accessorKey: 'price', header: 'Price' },
-        { accessorKey: 'category.name', header: 'Category' },
-        { accessorKey: 'discountPrice', header: 'Discount Price' },
-        { accessorKey: 'rating', header: 'Rating' },
-        {
-            header: "Description",
-            Cell: ({ row }) => row.original.productDetail?.description,
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
         },
-        {
-            header: "Sizes",
-            Cell: ({ row }) =>
-                row.original.productSizes.map((s) => s.name).join(", "),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSelectChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleMultiSelect = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setFormData((prev) => ({
+      ...prev,
+      ProductImages: files,
+    }));
+  };
+
+  const handleFeatureImageChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      FeatureImage: e.target.files[0],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formDataObj = new FormData();
+      formDataObj.append("Name", formData.Name);
+      formDataObj.append("Price", parseFloat(formData.Price));
+      formDataObj.append("DiscountPrice", parseFloat(formData.DiscountPrice));
+      formDataObj.append("Rating", parseFloat(formData.Rating));
+      formDataObj.append(
+        "ProductDetail.Description",
+        formData.ProductDetail.Description
+      );
+      formDataObj.append(
+        "ProductDetail.Material",
+        formData.ProductDetail.Material
+      );
+      formDataObj.append("ProductDetail.Id", formData.ProductDetail.Id);
+
+      // Append arrays
+      formData.CategoryId.forEach((id) =>
+        formDataObj.append("CategoryId", parseInt(id))
+      );
+      formData.SizeIds.forEach((id) =>
+        formDataObj.append("SizeIds", parseInt(id))
+      );
+      formData.ColorIds.forEach((id) =>
+        formDataObj.append("ColorIds", parseInt(id))
+      );
+
+      // ProductImages if any
+      formData.ProductImages.forEach((image) =>
+        formDataObj.append("ProductImages", image)
+      );
+
+      // FeatureImage if any
+      if (formData.FeatureImage) {
+        formDataObj.append("FeatureImage", formData.FeatureImage);
+      }
+
+      console.log(formData, "...................................");
+
+      await createProduct(formDataObj).unwrap();
+      toast.success("Product created successfully!");
+      // Reset form
+      setFormData({
+        Name: "",
+        CategoryId: [],
+        Price: "",
+        DiscountPrice: "",
+        Rating: "",
+        ProductDetail: {
+          Description: "",
+          Material: "",
+          Id: 1,
         },
-        {
-            header: "Colors",
-            Cell: ({ row }) =>
-                row.original.productColors.map((c) => c.name).join(", "),
-        },
+        ProductImages: [],
+        FeatureImage: null,
+        SizeIds: [],
+        ColorIds: [],
+      });
+    } catch (error) {
+      console.error("Failed to create product:", error);
+      toast.error("Failed to create product. Please try again.");
+    }
+  };
+  return (
+    <div className="container mx-auto p-6">
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Add New Product</CardTitle>
+          <CardDescription>
+            Fill in the details to add a new product to your inventory.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="Name" className="text-sm font-medium">
+                Product Name
+              </label>
+              <Input
+                id="Name"
+                name="Name"
+                value={formData.Name}
+                onChange={handleInputChange}
+                placeholder="Enter product name"
+                className="w-full"
+                required
+              />
+            </div>
 
-    ]
-
-    return (
-        <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Add Product" />
-            <Grid container spacing={{ xs: 3, md: 3 }}>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        autoFocus
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                        label="Name"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Price"
-                        value={productPrice}
-                        onChange={(e) => setProductPrice(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Discounted Price"
-                        value={productDiscountPridce}
-                        onChange={(e) => setProductDiscountPrice(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Rating"
-                        value={productRating}
-                        onChange={(e) => setProductRating(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                {/* <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Stock"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid> */}
-
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Product Detail"
-                        value={productDetails}
-                        onChange={(e) => setProductDetails(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Product Material"
-                        value={productMaterial}
-                        onChange={(e) => setProductMaterial(e.target.value)}
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-
-                {/* <Grid item xs={12} md={6}>
-                    <TextField
-                        label="Image URL"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid> */}
-
-                <Grid item xs={12} md={6}>
-                    <Autocomplete
-                        multiple
-                        fullWidth
-                        options={colors}
-                        loading={colorLoading}
-                        getOptionLabel={(option) => option.label || option.name || ""}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                        value={selectedColor} // this should be an array now
-                        onChange={(_, value) => setSelectedColor(value)} // value will be an array
-                        onInputChange={(_, value) => fetchColors(value)}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Color"
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                InputProps={{
-                                    ...params.InputProps,
-                                    sx: { borderRadius: 0 },
-                                }}
-                            />
-                        )}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <Autocomplete
-                        // multiple
-                        options={categories}
-                        loading={categoryLoading}
-                        getOptionLabel={(option) => option.label || option.name || ""}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                        value={selectedCategory}
-                        onChange={(_, value) => setSelectedCategory(value)}
-                        onInputChange={(_, value) => fetchCategories(value)} // fetch on search
-                        fullWidth
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Category"
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                InputProps={{
-                                    ...params.InputProps,
-                                    sx: { borderRadius: 0 },
-                                }}
-                            />
-                        )}
-                    />
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                    <Autocomplete
-                        multiple
-                        options={size}
-                        loading={sizeLoading}
-                        getOptionLabel={(option) => option.label || option.name || ""}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                        value={selectedSize}
-                        onChange={(_, value) => setSelectedSize(value)}
-                        onInputChange={(_, value) => fetchSizes(value)} // fetch on search
-                        fullWidth
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Size"
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                InputProps={{
-                                    ...params.InputProps,
-                                    sx: { borderRadius: 0 },
-                                }}
-                            />
-                        )}
-                    />
-                </Grid>
-
-                <Grid
-                    item
-                    xs={12}
-                    sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}
-                >
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        hidden
-                        onChange={handleFileChange}
-                        accept="image/*"
-                        multiple
-                    />
-
-                    <Box
-                        sx={{
-                            width: 150,
-                            height: 150,
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "pointer",
-                            border: "1px dashed #ccc",
-                            "&:hover": { borderColor: "#1976d2" },
-                            mb: 2,
-                        }}
-                        onClick={handleAvatarClick}
-                    >
-                        <Typography variant="caption">Upload Images</Typography>
-                    </Box>
-
-                    {/* Preview Grid */}
-                    <Grid container spacing={2}>
-                        {images.map((img, index) => (
-                            <Grid item key={index}>
-                                <Box
-                                    sx={{
-                                        position: "relative",
-                                        width: 100, // smaller width
-                                        height: 100, // smaller height
-                                        borderRadius: "8px",
-                                        overflow: "hidden",
-                                        border: "1px solid #ddd",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center"
-                                    }}
-                                >
-                                    <img
-                                        src={img.preview}
-                                        alt={`preview-${index}`}
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                            display: "block"
-                                        }}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        size="small"
-                                        onClick={() => handleRemoveImage(index)}
-                                        sx={{
-                                            position: "absolute",
-                                            top: 4,
-                                            right: 4,
-                                            minWidth: "24px",
-                                            padding: "0 4px",
-                                            fontSize: "10px"
-                                        }}
-                                    >
-                                        X
-                                    </Button>
-                                </Box>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Grid>
-
-            </Grid>
-            {/* Table Below */}
-            <Button
-                onClick={!post ? handleUpdate : handleCreate}
-                style={{
-                    padding: '5px 10px',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '0px',
-                    cursor: 'pointer',
-                    marginTop: '16px'
+            <div className="space-y-2">
+              <label htmlFor="CategoryId" className="text-sm font-medium">
+                Category
+              </label>
+              <Select
+                isMulti
+                options={categories?.data?.data?.map((category) => ({
+                  value: category.id,
+                  label: category.name,
+                }))}
+                onChange={(selectedOptions) =>
+                  handleMultiSelect(
+                    "CategoryId",
+                    selectedOptions?.map((option) => option.value) || []
+                  )
+                }
+                placeholder="Select categories"
+                className="w-full"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
+                    },
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#e5e7eb"
+                      : state.isFocused
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#f3f4f6"
+                      : isDarkMode
+                      ? "#374151"
+                      : "#ffffff",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
+                  }),
+                  multiValueLabel: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  multiValueRemove: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
+                    },
+                  }),
+                  input: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#9ca3af" : "#6b7280",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
                 }}
-                bg=""
-                variant="contained"
-            >
+              />
+            </div>
 
-                {!post ? "Update Product" : "Add Product"}
-            </Button>
-            {/* Table Below */}
-            <Box mt={4} sx={{ overflowX: 'auto' }}>
-                <MaterialTable
-                    title={"Product List"}
-                    data={products}
-                    columns={Column}
-                    onPagination={handlePageChange}
-                    isLoading={isLoading}
-                    onSearch={handleGlobalSearch}
-                    onDelete={handleDelete}
-                    onUpdate={getProductData}
+            <div className="space-y-2">
+              <label htmlFor="ColorIds" className="text-sm font-medium">
+                Colors
+              </label>
+              <Select
+                isMulti
+                options={colors?.data?.data?.map((color) => ({
+                  value: color.id,
+                  label: color.name,
+                }))}
+                onChange={(selectedOptions) =>
+                  handleMultiSelect(
+                    "ColorIds",
+                    selectedOptions?.map((option) => option.value) || []
+                  )
+                }
+                placeholder="Select colors"
+                className="w-full"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
+                    },
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#e5e7eb"
+                      : state.isFocused
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#f3f4f6"
+                      : isDarkMode
+                      ? "#374151"
+                      : "#ffffff",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
+                  }),
+                  multiValueLabel: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  multiValueRemove: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
+                    },
+                  }),
+                  input: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#9ca3af" : "#6b7280",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="SizeIds" className="text-sm font-medium">
+                Sizes
+              </label>
+              <Select
+                isMulti
+                options={sizes?.data?.data?.map((size) => ({
+                  value: size.id,
+                  label: size.name,
+                }))}
+                onChange={(selectedOptions) =>
+                  handleMultiSelect(
+                    "SizeIds",
+                    selectedOptions?.map((option) => option.value) || []
+                  )
+                }
+                placeholder="Select sizes"
+                className="w-full"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
+                    },
+                  }),
+                  menu: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#e5e7eb"
+                      : state.isFocused
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#f3f4f6"
+                      : isDarkMode
+                      ? "#374151"
+                      : "#ffffff",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
+                  }),
+                  multiValueLabel: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  multiValueRemove: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
+                    },
+                  }),
+                  input: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#9ca3af" : "#6b7280",
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                  }),
+                }}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="Price" className="text-sm font-medium">
+                  Price
+                </label>
+                <Input
+                  id="Price"
+                  name="Price"
+                  type="number"
+                  step="0.01"
+                  value={formData.Price}
+                  onChange={handleInputChange}
+                  placeholder="Enter price"
+                  className="w-full"
+                  required
                 />
-            </Box>
-        </Paper>
-    );
-};
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="DiscountPrice" className="text-sm font-medium">
+                  Discount Price
+                </label>
+                <Input
+                  id="DiscountPrice"
+                  name="DiscountPrice"
+                  type="number"
+                  step="0.01"
+                  value={formData.DiscountPrice}
+                  onChange={handleInputChange}
+                  placeholder="Enter discount price"
+                  className="w-full"
+                />
+              </div>
+            </div>
 
-export default page;
+            <div className="space-y-2">
+              <label htmlFor="Rating" className="text-sm font-medium">
+                Rating
+              </label>
+              <Input
+                id="Rating"
+                name="Rating"
+                type="number"
+                step="0.1"
+                min="0"
+                max="5"
+                value={formData.Rating}
+                onChange={handleInputChange}
+                placeholder="Enter rating (0-5)"
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="ProductDetail.Description"
+                className="text-sm font-medium"
+              >
+                Description
+              </label>
+              <Textarea
+                id="ProductDetail.Description"
+                name="ProductDetail.Description"
+                value={formData.ProductDetail.Description}
+                onChange={handleInputChange}
+                placeholder="Enter product description"
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="ProductDetail.Material"
+                className="text-sm font-medium"
+              >
+                Material
+              </label>
+              <Input
+                id="ProductDetail.Material"
+                name="ProductDetail.Material"
+                value={formData.ProductDetail.Material}
+                onChange={handleInputChange}
+                placeholder="Enter material"
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="FeatureImage" className="text-sm font-medium">
+                Feature Image
+              </label>
+              <Input
+                id="FeatureImage"
+                name="FeatureImage"
+                type="file"
+                onChange={handleFeatureImageChange}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="ProductImages" className="text-sm font-medium">
+                Product Images
+              </label>
+              <Input
+                id="ProductImages"
+                name="ProductImages"
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <Button type="submit" variant="default">
+                Add Product
+              </Button>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

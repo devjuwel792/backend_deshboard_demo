@@ -1,4 +1,8 @@
-# TODO: Add RTK Query to the Project
-
-- [x] Create API slice file (`src/Helper/Redux/features/api/apiSlice.js`) with RTK Query setup using fetchBaseQuery.
-- [x] Update `src/Helper/Redux/store.js` to include the API reducer from the new slice.
+- [x] Add deleteProduct mutation to productApiSlice.js
+- [x] Export useDeleteProductMutation hook
+- [x] Import useDeleteProductMutation in products page
+- [x] Add handleDelete function in products page
+- [x] Pass onDelete prop to MaterialTable in products page
+- [ ] Test the delete functionality in the products page
+- [ ] Add confirmation dialog before deleting (optional enhancement)
+- [ ] Add success/error toast notifications (optional enhancement)

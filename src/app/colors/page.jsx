@@ -1,148 +1,180 @@
-'use client'
-import Title from '@/Components/common/Title/Title';
-import MaterialTable from '@/Components/ui/MaterialTable/MaterialTable';
-import { Box, Button, Grid, Paper, TextField } from '@mui/material';
-import React, { useState } from 'react';
-import { createColor, deleteColor, getColors, updateColor } from '../../Utils/API/data';
+"use client";
 
-const page = () => {
+import React, { useState, useEffect } from "react";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
 
-    const [colors, setColors] = useState([])
-    const [pageSize, setPageSize] = useState(10);
-    const [pageIndex, setPageIndex] = useState(0);
-    const [getColorIsLoading, setGetColorIsLoading] = useState(false)
-    const [searchText, setSearchText] = useState("");
-    const [selectedColor, setSelectedColor] = useState(null);
-    const [colorName, setColorName] = useState("");
-    const [error, setError] = useState("");
+import MaterialTable from "@/Components/ui/MaterialTable/MaterialTable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  useGetColorsQuery,
+  useCreateColorMutation,
+  useUpdateColorMutation,
+  useDeleteColorMutation,
+} from "@/Helper/Redux/features/api/colorApiSlice";
 
+const ColorModal = ({ isOpen, onClose, color, onSave }) => {
+  const [name, setName] = useState(color?.name || "");
 
-    const handlePageChange = (pagination) => {
-        setPageIndex(pagination?.pageIndex || 0);
-        setPageSize(pagination?.pageSize || 10);
-    }
-    const handleGlobalSearch = (searchText) => {
-        setSearchText(searchText || "");
-    }
+  useEffect(() => {
+    setName(color?.name || "");
+  }, [color]);
 
-    const handleCreate = async () => {
-        if (!colorName.trim()) {
-            setError("Color name cannot be empty");
-            return;
-        }
-        setError("")
-        const result = await createColor({
-            name: colorName,
-        })
-        console.log("🚀 ~ handleCreate ~ result:", result)
-        if (result?.success) {
-            fetchColors()
-            setColorName("")
-        }
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const getUpdateItem = (item) => {
-        item && setSelectedColor(item);
-        item && setColorName(item?.name || "");
-    }
+    onSave({ name });
+    setName("");
+    onClose();
+  };
 
-
-    const handleUpdate = async () => {
-        if (!colorName.trim()) {
-            setError("Color name cannot be empty");
-            return;
-        }
-        setError("")
-        const result = await updateColor(selectedColor?.id, {
-            id: selectedColor?.id,
-            name: colorName || selectedColor?.name
-        })
-        console.log("🚀 ~ handleUpdate ~ result:", result)
-        result?.success && fetchColors()
-    }
-
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this color?");
-        if (!confirmDelete) return;
-        const result = await deleteColor(id)
-        console.log("🚀 ~ handleDelete ~ result:", result)
-        result?.success && fetchColors()
-    }
-
-    const fetchColors = async () => {
-        setGetColorIsLoading(true)
-        const result = await getColors({
-            pageSize: pageSize,
-            pageIndex: pageIndex,
-            searchText: searchText,
-        })
-        if (result?.success) {
-            setColors(result.data)
-        }
-        setGetColorIsLoading(false)
-    }
-
-    const Column = [
-        { accessorKey: 'name', header: 'Name' },
-    ]
-
-    React.useEffect(() => {
-        fetchColors();
-    }, [pageIndex, pageSize, searchText]);
-
-
-
-    return (
-        <Paper className='p-4' sx={{ px: { xs: 2, sm: 4 }, py: { xs: 2, sm: 4 } }}>
-            <Title title="Color" />
-            <Grid container spacing={{ xs: 3, md: 3 }}>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        autoFocus
-                        value={colorName}
-                        onChange={(e) => setColorName(e.target.value)}
-                        label="Name"
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        error={!!error}
-                        helperText={error}
-                        InputProps={{
-                            sx: { borderRadius: 0 },
-                        }}
-                    />
-                </Grid>
-            </Grid>
-            <Button
-                onClick={selectedColor ? handleUpdate : handleCreate}
-                style={{
-                    padding: '5px 10px',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '0px',
-                    cursor: 'pointer',
-                    marginTop: '16px'
-                }}
-                bg="primary"
-                variant="contained"
-            >
-                {selectedColor ? "Update Color" : "Add Color"}
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {color ? "Edit Color" : "Add New Color"}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium mb-1">
+              Color Name
+            </label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter color name"
+              required
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
             </Button>
-            {/* Table Below */}
-            <Box mt={4} sx={{ overflowX: 'auto' }}>
-                <MaterialTable
-                    title={"Color List"}
-                    data={colors}
-                    columns={Column}
-                    onPagination={handlePageChange}
-                    isLoading={getColorIsLoading}
-                    onSearch={handleGlobalSearch}
-                    onDelete={handleDelete}
-                    onUpdate={getUpdateItem}
-                />
-            </Box>
-        </Paper>
-    );
+            <Button type="submit">{color ? "Update" : "Create"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
-export default page;
+export default function ColorsPage() {
+  const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingColor, setEditingColor] = useState(null);
+
+  const {
+    data: colorsData,
+    isLoading,
+    error,
+  } = useGetColorsQuery({
+    pageIndex: page - 1,
+    pageSize: 10,
+  });
+  console.log("🚀 ~ ColorsPage ~ colorsData:", colorsData);
+
+  const [createColor] = useCreateColorMutation();
+  const [updateColor] = useUpdateColorMutation();
+  const [deleteColor] = useDeleteColorMutation();
+
+  const columns = [
+    { header: "ID", accessorKey: "id" },
+    { header: "Name", accessorKey: "name" },
+  ];
+
+  const handleCreate = async (colorData) => {
+    try {
+      await createColor(colorData).unwrap();
+    } catch (error) {
+      console.error("Failed to create color:", error);
+    }
+  };
+
+  const handleUpdate = async (colorData) => {
+    try {
+      await updateColor({
+        id: editingColor.id,
+        ...colorData,
+      }).unwrap();
+      setEditingColor(null);
+    } catch (error) {
+      console.error("Failed to update color:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+   
+      try {
+        await deleteColor(id).unwrap();
+      } catch (error) {
+        console.error("Failed to delete color:", error);
+      }
+    
+  };
+
+  const handleSave = (colorData) => {
+    if (editingColor) {
+      handleUpdate(colorData);
+    } else {
+      handleCreate(colorData);
+    }
+  };
+
+  const handleEdit = (color) => {
+    setEditingColor(color);
+    setIsModalOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingColor(null);
+    setIsModalOpen(true);
+  };
+
+  const handlePagination = (newPage) => {
+    setPage(newPage);
+  };
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-red-500">
+          Error loading colors: {error.message}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Colors</h1>
+        <Button onClick={handleAddNew}>Add New Color</Button>
+      </div>
+      <MaterialTable
+        data={colorsData?.data?.data || []}
+        columns={columns}
+        isLoading={isLoading}
+        title="Colors"
+        onUpdate={handleEdit}
+        onDelete={handleDelete}
+        onPagination={handlePagination}
+      />
+
+      <ColorModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        color={editingColor}
+        onSave={handleSave}
+      />
+    </div>
+  );
+}

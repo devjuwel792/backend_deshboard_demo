@@ -39,7 +39,7 @@ const SubmenuSidebarItem = ({ item, actualWidth, forceClose = false }) => {
                         ${isActive ? 'bg-[#2b333b] text-secondary-orange' : 'hover:bg-[#334155]'}`}
                 >
                     <span className="text-lg">{item.icon}</span>
-                    <span className={`text-[15px] line-clamp-1 ${!actualWidth ? 'hidden' : ''}`}>{t(`common.${item.label.toLowerCase().replace(/\s+/g, '-')}`)}</span>
+                    <span className={`text-[15px] line-clamp-1 ${!actualWidth ? 'hidden' : ''}`}>{t(`${item.label.toLowerCase().replace(/\s+/g, '-')}`)}</span>
                     <span className={`${actualWidth ? "" : "hidden"}`}>
                         {!isSubmenuOpen ? (
                             <ChevronDown size={18} aria-hidden="true" />

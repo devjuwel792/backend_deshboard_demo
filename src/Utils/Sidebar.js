@@ -19,15 +19,16 @@ export const menu = [
         label: "Dashboard",
         href: "/"
     },
+
     {
         icon: <PackagePlus size={16} />,
-        label: "Add Product",
-        href: "/add-product",
+        label: "Products",
+        href: "/products",
     },
     {
         icon: <Megaphone size={16} />,
         label: "Category",
-        href: "/category",
+        href: "/categories",
     },
     {
         icon: <Megaphone size={16} />,
@@ -37,7 +38,7 @@ export const menu = [
     {
         icon: <Megaphone size={16} />,
         label: "Sizes",
-        href: "/size",
+        href: "/sizes",
     },
     {
         icon: <Users size={16} />,

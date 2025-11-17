@@ -16,7 +16,15 @@ const baseQuery = fetchBaseQuery({
 
 export const apiSlice = createApi({
   baseQuery,
+  tagTypes: ['Categories', 'Colors', 'Sizes', 'Products'],
   endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: 'https://test.skyit.com.bd/api/Account/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
     // Define your endpoints here
     // Example:
     // getUsers: builder.query({
@@ -26,6 +34,7 @@ export const apiSlice = createApi({
 });
 
 export const {
+  useLoginMutation,
   // Export hooks here
   // Example:
   // useGetUsersQuery,
