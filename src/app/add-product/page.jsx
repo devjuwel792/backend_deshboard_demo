@@ -4,7 +4,13 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useCreateProductMutation } from "@/Helper/Redux/features/api/productApiSlice";
 import { useGetCategoriesQuery } from "@/Helper/Redux/features/api/categoryApiSlice";
 import { useGetColorsQuery } from "@/Helper/Redux/features/api/colorApiSlice";
@@ -32,6 +38,7 @@ export default function AddProductPage() {
       Id: 1,
     },
     ProductImages: [],
+    FeatureImage: null,
     SizeIds: [],
     ColorIds: [],
   });
@@ -77,6 +84,13 @@ export default function AddProductPage() {
     }));
   };
 
+  const handleFeatureImageChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      FeatureImage: e.target.files[0],
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -85,17 +99,38 @@ export default function AddProductPage() {
       formDataObj.append("Price", parseFloat(formData.Price));
       formDataObj.append("DiscountPrice", parseFloat(formData.DiscountPrice));
       formDataObj.append("Rating", parseFloat(formData.Rating));
-      formDataObj.append("ProductDetail.Description", formData.ProductDetail.Description);
-      formDataObj.append("ProductDetail.Material", formData.ProductDetail.Material);
+      formDataObj.append(
+        "ProductDetail.Description",
+        formData.ProductDetail.Description
+      );
+      formDataObj.append(
+        "ProductDetail.Material",
+        formData.ProductDetail.Material
+      );
       formDataObj.append("ProductDetail.Id", formData.ProductDetail.Id);
 
       // Append arrays
-      formData.CategoryId.forEach(id => formDataObj.append("CategoryId", parseInt(id)));
-      formData.SizeIds.forEach(id => formDataObj.append("SizeIds", parseInt(id)));
-      formData.ColorIds.forEach(id => formDataObj.append("ColorIds", parseInt(id)));
+      formData.CategoryId.forEach((id) =>
+        formDataObj.append("CategoryId", parseInt(id))
+      );
+      formData.SizeIds.forEach((id) =>
+        formDataObj.append("SizeIds", parseInt(id))
+      );
+      formData.ColorIds.forEach((id) =>
+        formDataObj.append("ColorIds", parseInt(id))
+      );
 
       // ProductImages if any
-      formData.ProductImages.forEach(image => formDataObj.append("ProductImages", image));
+      formData.ProductImages.forEach((image) =>
+        formDataObj.append("ProductImages", image)
+      );
+
+      // FeatureImage if any
+      if (formData.FeatureImage) {
+        formDataObj.append("FeatureImage", formData.FeatureImage);
+      }
+
+      console.log(formData, "...................................");
 
       await createProduct(formDataObj).unwrap();
       toast.success("Product created successfully!");
@@ -112,6 +147,7 @@ export default function AddProductPage() {
           Id: 1,
         },
         ProductImages: [],
+        FeatureImage: null,
         SizeIds: [],
         ColorIds: [],
       });
@@ -156,58 +192,69 @@ export default function AddProductPage() {
                   value: category.id,
                   label: category.name,
                 }))}
-                onChange={(selectedOptions) => handleMultiSelect("CategoryId", selectedOptions?.map(option => option.value) || [])}
+                onChange={(selectedOptions) =>
+                  handleMultiSelect(
+                    "CategoryId",
+                    selectedOptions?.map((option) => option.value) || []
+                  )
+                }
                 placeholder="Select categories"
                 className="w-full"
                 styles={{
                   control: (provided, state) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
-                    borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
-                    color: isDarkMode ? '#ffffff' : '#000000',
-                    '&:hover': {
-                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
                     },
                   }),
                   menu: (provided) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
                   }),
                   option: (provided, state) => ({
                     ...provided,
                     backgroundColor: state.isSelected
-                      ? isDarkMode ? '#4b5563' : '#e5e7eb'
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#e5e7eb"
                       : state.isFocused
-                      ? isDarkMode ? '#4b5563' : '#f3f4f6'
-                      : isDarkMode ? '#374151' : '#ffffff',
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#f3f4f6"
+                      : isDarkMode
+                      ? "#374151"
+                      : "#ffffff",
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   multiValue: (provided) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
                   }),
                   multiValueLabel: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   multiValueRemove: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
-                    '&:hover': {
-                      backgroundColor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
                     },
                   }),
                   input: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   placeholder: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                    color: isDarkMode ? "#9ca3af" : "#6b7280",
                   }),
                   singleValue: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                 }}
               />
@@ -223,58 +270,69 @@ export default function AddProductPage() {
                   value: color.id,
                   label: color.name,
                 }))}
-                onChange={(selectedOptions) => handleMultiSelect("ColorIds", selectedOptions?.map(option => option.value) || [])}
+                onChange={(selectedOptions) =>
+                  handleMultiSelect(
+                    "ColorIds",
+                    selectedOptions?.map((option) => option.value) || []
+                  )
+                }
                 placeholder="Select colors"
                 className="w-full"
                 styles={{
                   control: (provided, state) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
-                    borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
-                    color: isDarkMode ? '#ffffff' : '#000000',
-                    '&:hover': {
-                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
                     },
                   }),
                   menu: (provided) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
                   }),
                   option: (provided, state) => ({
                     ...provided,
                     backgroundColor: state.isSelected
-                      ? isDarkMode ? '#4b5563' : '#e5e7eb'
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#e5e7eb"
                       : state.isFocused
-                      ? isDarkMode ? '#4b5563' : '#f3f4f6'
-                      : isDarkMode ? '#374151' : '#ffffff',
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#f3f4f6"
+                      : isDarkMode
+                      ? "#374151"
+                      : "#ffffff",
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   multiValue: (provided) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
                   }),
                   multiValueLabel: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   multiValueRemove: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
-                    '&:hover': {
-                      backgroundColor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
                     },
                   }),
                   input: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   placeholder: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                    color: isDarkMode ? "#9ca3af" : "#6b7280",
                   }),
                   singleValue: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                 }}
               />
@@ -290,58 +348,69 @@ export default function AddProductPage() {
                   value: size.id,
                   label: size.name,
                 }))}
-                onChange={(selectedOptions) => handleMultiSelect("SizeIds", selectedOptions?.map(option => option.value) || [])}
+                onChange={(selectedOptions) =>
+                  handleMultiSelect(
+                    "SizeIds",
+                    selectedOptions?.map((option) => option.value) || []
+                  )
+                }
                 placeholder="Select sizes"
                 className="w-full"
                 styles={{
                   control: (provided, state) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
-                    borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
-                    color: isDarkMode ? '#ffffff' : '#000000',
-                    '&:hover': {
-                      borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
                     },
                   }),
                   menu: (provided) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
                   }),
                   option: (provided, state) => ({
                     ...provided,
                     backgroundColor: state.isSelected
-                      ? isDarkMode ? '#4b5563' : '#e5e7eb'
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#e5e7eb"
                       : state.isFocused
-                      ? isDarkMode ? '#4b5563' : '#f3f4f6'
-                      : isDarkMode ? '#374151' : '#ffffff',
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                      ? isDarkMode
+                        ? "#4b5563"
+                        : "#f3f4f6"
+                      : isDarkMode
+                      ? "#374151"
+                      : "#ffffff",
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   multiValue: (provided) => ({
                     ...provided,
-                    backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
                   }),
                   multiValueLabel: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   multiValueRemove: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
-                    '&:hover': {
-                      backgroundColor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    color: isDarkMode ? "#ffffff" : "#000000",
+                    "&:hover": {
+                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
                     },
                   }),
                   input: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                   placeholder: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                    color: isDarkMode ? "#9ca3af" : "#6b7280",
                   }),
                   singleValue: (provided) => ({
                     ...provided,
-                    color: isDarkMode ? '#ffffff' : '#000000',
+                    color: isDarkMode ? "#ffffff" : "#000000",
                   }),
                 }}
               />
@@ -400,7 +469,10 @@ export default function AddProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="ProductDetail.Description" className="text-sm font-medium">
+              <label
+                htmlFor="ProductDetail.Description"
+                className="text-sm font-medium"
+              >
                 Description
               </label>
               <Textarea
@@ -414,7 +486,10 @@ export default function AddProductPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="ProductDetail.Material" className="text-sm font-medium">
+              <label
+                htmlFor="ProductDetail.Material"
+                className="text-sm font-medium"
+              >
                 Material
               </label>
               <Input
@@ -423,6 +498,19 @@ export default function AddProductPage() {
                 value={formData.ProductDetail.Material}
                 onChange={handleInputChange}
                 placeholder="Enter material"
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="FeatureImage" className="text-sm font-medium">
+                Feature Image
+              </label>
+              <Input
+                id="FeatureImage"
+                name="FeatureImage"
+                type="file"
+                onChange={handleFeatureImageChange}
                 className="w-full"
               />
             </div>

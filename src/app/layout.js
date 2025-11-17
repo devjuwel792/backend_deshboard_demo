@@ -27,7 +27,6 @@ export default function RootLayout({ children }) {
         className={` antialiased flex max-w-[1920px] mx-auto dark:bg-background bg-lightBg min-h-screen`}
       >
         <ClientProviders>
-
           <Sidebar>{children}</Sidebar>
           <Toaster />
         </ClientProviders>
