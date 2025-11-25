@@ -34,8 +34,7 @@ export default function AddProductPage() {
     Rating: "",
     ProductDetail: {
       Description: "",
-      Material: "",
-      Id: 1,
+      Material: ""
     },
     ProductImages: [],
     FeatureImage: null,
@@ -92,70 +91,80 @@ export default function AddProductPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const formDataObj = new FormData();
-      formDataObj.append("Name", formData.Name);
-      formDataObj.append("Price", parseFloat(formData.Price));
-      formDataObj.append("DiscountPrice", parseFloat(formData.DiscountPrice));
-      formDataObj.append("Rating", parseFloat(formData.Rating));
-      formDataObj.append(
-        "ProductDetail.Description",
-        formData.ProductDetail.Description
-      );
-      formDataObj.append(
-        "ProductDetail.Material",
-        formData.ProductDetail.Material
-      );
-      formDataObj.append("ProductDetail.Id", formData.ProductDetail.Id);
+  e.preventDefault();
 
-      // Append arrays
-      formData.CategoryId.forEach((id) =>
-        formDataObj.append("CategoryId", parseInt(id))
-      );
-      formData.SizeIds.forEach((id) =>
-        formDataObj.append("SizeIds", parseInt(id))
-      );
-      formData.ColorIds.forEach((id) =>
-        formDataObj.append("ColorIds", parseInt(id))
-      );
+  try {
+    const fd = new FormData();
 
-      // ProductImages if any
-      formData.ProductImages.forEach((image) =>
-        formDataObj.append("ProductImages", image)
-      );
+    // ====== BASIC FIELDS ======
+    fd.append("Name", formData.Name);
+    fd.append("Price", formData.Price);
+    fd.append("DiscountPrice", formData.DiscountPrice);
+    fd.append("Rating", formData.Rating);
 
-      // FeatureImage if any
-      if (formData.FeatureImage) {
-        formDataObj.append("FeatureImage", formData.FeatureImage);
-      }
-
-      console.log(formData, "...................................");
-
-      await createProduct(formDataObj).unwrap();
-      toast.success("Product created successfully!");
-      // Reset form
-      setFormData({
-        Name: "",
-        CategoryId: [],
-        Price: "",
-        DiscountPrice: "",
-        Rating: "",
-        ProductDetail: {
-          Description: "",
-          Material: "",
-          Id: 1,
-        },
-        ProductImages: [],
-        FeatureImage: null,
-        SizeIds: [],
-        ColorIds: [],
-      });
-    } catch (error) {
-      console.error("Failed to create product:", error);
-      toast.error("Failed to create product. Please try again.");
+    // ====== CATEGORY (Backend expects single long) ======
+    if (formData.CategoryId.length > 0) {
+      fd.append("CategoryId", formData.CategoryId[0]);
     }
-  };
+
+    // ====== PRODUCT DETAIL (NESTED OBJECT) ======
+    fd.append("ProductDetail.Description", formData.ProductDetail.Description);
+    fd.append("ProductDetail.Material", formData.ProductDetail.Material);
+
+    // ====== SIZE IDS ======
+    formData.SizeIds.forEach((id, idx) => {
+      fd.append(`SizeIds[${idx}]`, id);
+    });
+
+    // ====== COLOR IDS ======
+    formData.ColorIds.forEach((id, idx) => {
+      fd.append(`ColorIds[${idx}]`, id);
+    });
+
+    // ====== MULTIPLE PRODUCT IMAGES ======
+formData.ProductImages.forEach(file => {
+  fd.append("ProductImages", file); // ✅ correct
+});
+
+    // ====== SINGLE FEATURE IMAGE ======
+    if (formData.FeatureImage) {
+      fd.append("FeatureImage", formData.FeatureImage);
+    }
+
+    // ====== DEBUG CHECK ======
+    console.log("FormData content:");
+    for (let pair of fd.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
+    // ====== API CALL ======
+    await createProduct(fd).unwrap();
+
+    toast.success("Product created successfully!");
+
+    // ====== RESET FORM ======
+    setFormData({
+      Name: "",
+      CategoryId: [],
+      Price: "",
+      DiscountPrice: "",
+      Rating: "",
+      ProductDetail: {
+        Description: "",
+        Material: ""
+      },
+      ProductImages: [],
+      FeatureImage: null,
+      SizeIds: [],
+      ColorIds: [],
+    });
+
+  } catch (error) {
+    console.error("Failed to create product:", error);
+    toast.error("Failed to create product. Please try again.");
+  }
+};
+
   return (
     <div className="container mx-auto p-6">
       <Card className="max-w-2xl mx-auto">
