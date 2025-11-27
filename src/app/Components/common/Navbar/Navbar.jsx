@@ -6,9 +6,9 @@ import {
     Wallet,
     LogOut
 } from 'lucide-react';
-import Dropdown from "@/Components/ui/Dropdown/Dropdown";
-import HoverOutlineButton from "@/Components/ui/HoverOutlineButton/HoverOutlineButton";
-import SearchInput from "@/Components/ui/SearchInput/SearchInput";
+import Dropdown from "@/app/Components/ui/Dropdown/Dropdown";
+import HoverOutlineButton from "@/app/Components/ui/HoverOutlineButton/HoverOutlineButton";
+import SearchInput from "@/app/Components/ui/SearchInput/SearchInput";
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '@/Helper/Redux/features/sidebar/sidebarSlice';
 import { toggleTheme } from '@/Helper/Redux/features/theme/themeSlice';

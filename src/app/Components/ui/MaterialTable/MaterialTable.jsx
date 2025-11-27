@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+} from "@/app/Components/ui/alert-dialog";
 
 const MaterialTable = ({
   data,

@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
+import { Button } from "@/app/Components/ui/button";
+import { Input } from "@/app/Components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,10 +14,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+} from "@/app/Components/ui/alert-dialog";
 import { toast } from "react-toastify";
 
-import MaterialTable from "@/Components/ui/MaterialTable/MaterialTable";
+import MaterialTable from "@/app/Components/ui/MaterialTable/MaterialTable";
 import { useGetProductsQuery, useDeleteProductMutation } from "@/Helper/Redux/features/api/productApiSlice";
 
 export default function ProductsPage() {

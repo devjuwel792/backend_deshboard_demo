@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
+import { Button } from "@/app/Components/ui/button";
+import { Input } from "@/app/Components/ui/input";
 
-import MaterialTable from "@/Components/ui/MaterialTable/MaterialTable";
+import MaterialTable from "@/app/Components/ui/MaterialTable/MaterialTable";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/app/Components/ui/dialog";
 import {
   useGetCategoriesQuery,
   useCreateCategoryMutation,
