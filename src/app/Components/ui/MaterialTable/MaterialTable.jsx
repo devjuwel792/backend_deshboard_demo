@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/app/Components/ui/table";
 import {
   AlertDialog,
   AlertDialogAction,

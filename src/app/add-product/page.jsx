@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/app/Components/ui/button";
+import { Input } from "@/app/Components/ui/input";
+import { Textarea } from "@/app/Components/ui/textarea";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/app/Components/ui/card";
 import { useCreateProductMutation } from "@/Helper/Redux/features/api/productApiSlice";
 import { useGetCategoriesQuery } from "@/Helper/Redux/features/api/categoryApiSlice";
 import { useGetColorsQuery } from "@/Helper/Redux/features/api/colorApiSlice";
