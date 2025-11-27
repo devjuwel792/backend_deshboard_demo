@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,30 +18,123 @@ import { useGetSizesQuery } from "@/Helper/Redux/features/api/sizeApiSlice";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Select from "react-select";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
 
 export default function AddProductPage() {
-  const [createProduct] = useCreateProductMutation();
-  const { data: categories } = useGetCategoriesQuery();
-  const { data: colors } = useGetColorsQuery();
-  const { data: sizes } = useGetSizesQuery();
+  const [createProduct, { isLoading }] = useCreateProductMutation();
+  const { data: categoriesData } = useGetCategoriesQuery();
+  const { data: colorsData } = useGetColorsQuery();
+  const { data: sizesData } = useGetSizesQuery();
   const isDarkMode = useSelector((state) => state.theme.isDarkMode);
 
   const [formData, setFormData] = useState({
     Name: "",
-    CategoryId: [],
+    CategoryIds: [],
     Price: "",
     DiscountPrice: "",
     Rating: "",
-    ProductDetail: {
-      Description: "",
-      Material: "",
-      Id: 1,
-    },
+    ProductDetail: { Description: "", Material: "", Id: 1 },
     ProductImages: [],
     FeatureImage: null,
     SizeIds: [],
     ColorIds: [],
   });
+
+  // Image previews (URL.createObjectURL)
+  const [featureImagePreview, setFeatureImagePreview] = useState(null);
+  const [productImagePreviews, setProductImagePreviews] = useState([]);
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false);
+
+  const selectStyles = useMemo(
+    () => ({
+      control: (p) => ({
+        ...p,
+        backgroundColor: isDarkMode ? "#374151" : "#fff",
+        borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
+        color: isDarkMode ? "#fff" : "#000",
+        "&:hover": { borderColor: isDarkMode ? "#6b7280" : "#9ca3af" },
+      }),
+      menu: (p) => ({ ...p, backgroundColor: isDarkMode ? "#374151" : "#fff" }),
+      option: (p, { isSelected, isFocused }) => ({
+        ...p,
+        backgroundColor: isSelected
+          ? isDarkMode
+            ? "#4b5563"
+            : "#e5e7eb"
+          : isFocused
+          ? isDarkMode
+            ? "#4b5563"
+            : "#f3f4f6"
+          : "transparent",
+        color: isDarkMode ? "#fff" : "#000",
+      }),
+      multiValue: (p) => ({ ...p, backgroundColor: isDarkMode ? "#4b5563" : "#dbeafe" }),
+      multiValueLabel: (p) => ({ ...p, color: isDarkMode ? "#fff" : "#1e40af" }),
+      multiValueRemove: (p) => ({
+        ...p,
+        color: isDarkMode ? "#fff" : "#1e40af",
+        ":hover": { backgroundColor: "#ef4444", color: "white" },
+      }),
+      input: (p) => ({ ...p, color: isDarkMode ? "#fff" : "#000" }),
+      placeholder: (p) => ({ ...p, color: isDarkMode ? "#9ca3af" : "#6b7280" }),
+    }),
+    [isDarkMode]
+  );
+
+  // Handle file selection (input or drag & drop)
+  const handleFiles = (files, isFeature = false) => {
+    if (isFeature) {
+      const file = files[0];
+      if (!file) return;
+
+      setFormData((prev) => ({ ...prev, FeatureImage: file }));
+      setFeatureImagePreview(URL.createObjectURL(file));
+    } else {
+      const newFiles = Array.from(files);
+      const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
+
+      setFormData((prev) => ({
+        ...prev,
+        ProductImages: [...prev.ProductImages, ...newFiles],
+      }));
+      setProductImagePreviews((prev) => [...prev, ...newPreviews]);
+    }
+  };
+
+  // Remove Feature Image
+  const removeFeatureImage = () => {
+    if (featureImagePreview) URL.revokeObjectURL(featureImagePreview);
+    setFeatureImagePreview(null);
+    setFormData((prev) => ({ ...prev, FeatureImage: null }));
+    document.getElementById("feature-input").value = "";
+  };
+
+  // Remove specific product image
+  const removeProductImage = (index) => {
+    URL.revokeObjectURL(productImagePreviews[index]);
+    setProductImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      ProductImages: prev.ProductImages.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Drag & Drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => setIsDragging(false);
+
+  const handleDrop = (e, isFeature = false) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+    if (files.length) handleFiles(files, isFeature);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,491 +142,244 @@ export default function AddProductPage() {
       const [parent, child] = name.split(".");
       setFormData((prev) => ({
         ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: value,
-        },
+        [parent]: { ...prev[parent], [child]: value },
       }));
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  };
-
-  const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleMultiSelect = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setFormData((prev) => ({
-      ...prev,
-      ProductImages: files,
-    }));
-  };
-
-  const handleFeatureImageChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      FeatureImage: e.target.files[0],
-    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.Name.trim()) return toast.error("Product name is required");
+    if (!formData.Price || isNaN(formData.Price)) return toast.error("Valid price is required");
+
     try {
       const formDataObj = new FormData();
       formDataObj.append("Name", formData.Name);
-      formDataObj.append("Price", parseFloat(formData.Price));
-      formDataObj.append("DiscountPrice", parseFloat(formData.DiscountPrice));
-      formDataObj.append("Rating", parseFloat(formData.Rating));
-      formDataObj.append(
-        "ProductDetail.Description",
-        formData.ProductDetail.Description
-      );
-      formDataObj.append(
-        "ProductDetail.Material",
-        formData.ProductDetail.Material
-      );
+      formDataObj.append("Price", parseFloat(formData.Price) || 0);
+      formDataObj.append("DiscountPrice", parseFloat(formData.DiscountPrice) || 0);
+      formDataObj.append("Rating", parseFloat(formData.Rating) || 0);
+      formDataObj.append("ProductDetail.Description", formData.ProductDetail.Description);
+      formDataObj.append("ProductDetail.Material", formData.ProductDetail.Material);
       formDataObj.append("ProductDetail.Id", formData.ProductDetail.Id);
 
-      // Append arrays
-      formData.CategoryId.forEach((id) =>
-        formDataObj.append("CategoryId", parseInt(id))
-      );
-      formData.SizeIds.forEach((id) =>
-        formDataObj.append("SizeIds", parseInt(id))
-      );
-      formData.ColorIds.forEach((id) =>
-        formDataObj.append("ColorIds", parseInt(id))
-      );
+      formData.CategoryIds.forEach((id) => formDataObj.append("CategoryIds", id));
+      formData.SizeIds.forEach((id) => formDataObj.append("SizeIds", id));
+      formData.ColorIds.forEach((id) => formDataObj.append("ColorIds", id));
 
-      // ProductImages if any
-      formData.ProductImages.forEach((image) =>
-        formDataObj.append("ProductImages", image)
-      );
-
-      // FeatureImage if any
-      if (formData.FeatureImage) {
-        formDataObj.append("FeatureImage", formData.FeatureImage);
-      }
-
-      console.log(formData, "...................................");
+      formData.ProductImages.forEach((file) => formDataObj.append("ProductImages", file));
+      if (formData.FeatureImage) formDataObj.append("FeatureImage", formData.FeatureImage);
 
       await createProduct(formDataObj).unwrap();
       toast.success("Product created successfully!");
-      // Reset form
+
+      // Cleanup previews
+      if (featureImagePreview) URL.revokeObjectURL(featureImagePreview);
+      productImagePreviews.forEach((url) => URL.revokeObjectURL(url));
+
+      // Reset everything
       setFormData({
         Name: "",
-        CategoryId: [],
+        CategoryIds: [],
         Price: "",
         DiscountPrice: "",
         Rating: "",
-        ProductDetail: {
-          Description: "",
-          Material: "",
-          Id: 1,
-        },
+        ProductDetail: { Description: "", Material: "", Id: 1 },
         ProductImages: [],
         FeatureImage: null,
         SizeIds: [],
         ColorIds: [],
       });
-    } catch (error) {
-      console.error("Failed to create product:", error);
-      toast.error("Failed to create product. Please try again.");
+      setFeatureImagePreview(null);
+      setProductImagePreviews([]);
+      document.getElementById("feature-input").value = "";
+      document.getElementById("product-images-input").value = "";
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to create product");
     }
   };
+
+  // Options
+  const categoryOptions = categoriesData?.data?.data?.map((c) => ({ value: c.id, label: c.name })) || [];
+  const colorOptions = colorsData?.data?.data?.map((c) => ({ value: c.id, label: c.name })) || [];
+  const sizeOptions = sizesData?.data?.data?.map((s) => ({ value: s.id, label: s.name })) || [];
+
   return (
     <div className="container mx-auto p-6">
-      <Card className="max-w-2xl mx-auto">
+      <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Add New Product</CardTitle>
-          <CardDescription>
-            Fill in the details to add a new product to your inventory.
-          </CardDescription>
+          <CardDescription>Fill in the details and upload images</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-8">
+
+            {/* Product Name */}
             <div className="space-y-2">
-              <label htmlFor="Name" className="text-sm font-medium">
-                Product Name
-              </label>
-              <Input
-                id="Name"
-                name="Name"
-                value={formData.Name}
-                onChange={handleInputChange}
-                placeholder="Enter product name"
-                className="w-full"
-                required
-              />
+              <label className="text-sm font-medium">Product Name</label>
+              <Input name="Name" value={formData.Name} onChange={handleInputChange} required />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="CategoryId" className="text-sm font-medium">
-                Category
-              </label>
-              <Select
-                isMulti
-                options={categories?.data?.data?.map((category) => ({
-                  value: category.id,
-                  label: category.name,
-                }))}
-                onChange={(selectedOptions) =>
-                  handleMultiSelect(
-                    "CategoryId",
-                    selectedOptions?.map((option) => option.value) || []
-                  )
-                }
-                placeholder="Select categories"
-                className="w-full"
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                    "&:hover": {
-                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
-                    },
-                  }),
-                  menu: (provided) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? isDarkMode
-                        ? "#4b5563"
-                        : "#e5e7eb"
-                      : state.isFocused
-                      ? isDarkMode
-                        ? "#4b5563"
-                        : "#f3f4f6"
-                      : isDarkMode
-                      ? "#374151"
-                      : "#ffffff",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
-                  }),
-                  multiValueLabel: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                    "&:hover": {
-                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
-                    },
-                  }),
-                  input: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  placeholder: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#9ca3af" : "#6b7280",
-                  }),
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="ColorIds" className="text-sm font-medium">
-                Colors
-              </label>
-              <Select
-                isMulti
-                options={colors?.data?.data?.map((color) => ({
-                  value: color.id,
-                  label: color.name,
-                }))}
-                onChange={(selectedOptions) =>
-                  handleMultiSelect(
-                    "ColorIds",
-                    selectedOptions?.map((option) => option.value) || []
-                  )
-                }
-                placeholder="Select colors"
-                className="w-full"
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                    "&:hover": {
-                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
-                    },
-                  }),
-                  menu: (provided) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? isDarkMode
-                        ? "#4b5563"
-                        : "#e5e7eb"
-                      : state.isFocused
-                      ? isDarkMode
-                        ? "#4b5563"
-                        : "#f3f4f6"
-                      : isDarkMode
-                      ? "#374151"
-                      : "#ffffff",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
-                  }),
-                  multiValueLabel: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                    "&:hover": {
-                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
-                    },
-                  }),
-                  input: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  placeholder: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#9ca3af" : "#6b7280",
-                  }),
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="SizeIds" className="text-sm font-medium">
-                Sizes
-              </label>
-              <Select
-                isMulti
-                options={sizes?.data?.data?.map((size) => ({
-                  value: size.id,
-                  label: size.name,
-                }))}
-                onChange={(selectedOptions) =>
-                  handleMultiSelect(
-                    "SizeIds",
-                    selectedOptions?.map((option) => option.value) || []
-                  )
-                }
-                placeholder="Select sizes"
-                className="w-full"
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-                    borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                    "&:hover": {
-                      borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
-                    },
-                  }),
-                  menu: (provided) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-                  }),
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? isDarkMode
-                        ? "#4b5563"
-                        : "#e5e7eb"
-                      : state.isFocused
-                      ? isDarkMode
-                        ? "#4b5563"
-                        : "#f3f4f6"
-                      : isDarkMode
-                      ? "#374151"
-                      : "#ffffff",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  multiValue: (provided) => ({
-                    ...provided,
-                    backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
-                  }),
-                  multiValueLabel: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  multiValueRemove: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                    "&:hover": {
-                      backgroundColor: isDarkMode ? "#6b7280" : "#d1d5db",
-                    },
-                  }),
-                  input: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                  placeholder: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#9ca3af" : "#6b7280",
-                  }),
-                  singleValue: (provided) => ({
-                    ...provided,
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }),
-                }}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            {/* Categories, Colors, Sizes */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label htmlFor="Price" className="text-sm font-medium">
-                  Price
-                </label>
-                <Input
-                  id="Price"
-                  name="Price"
-                  type="number"
-                  step="0.01"
-                  value={formData.Price}
-                  onChange={handleInputChange}
-                  placeholder="Enter price"
-                  className="w-full"
-                  required
+                <label className="text-sm font-medium">Categories</label>
+                <Select
+                  isMulti
+                  options={categoryOptions}
+                  value={categoryOptions.filter((o) => formData.CategoryIds.includes(o.value))}
+                  onChange={(opts) => setFormData((p) => ({ ...p, CategoryIds: opts ? opts.map((o) => o.value) : [] }))}
+                  styles={selectStyles}
+                  placeholder="Select..."
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="DiscountPrice" className="text-sm font-medium">
-                  Discount Price
-                </label>
-                <Input
-                  id="DiscountPrice"
-                  name="DiscountPrice"
-                  type="number"
-                  step="0.01"
-                  value={formData.DiscountPrice}
-                  onChange={handleInputChange}
-                  placeholder="Enter discount price"
-                  className="w-full"
+                <label className="text-sm font-medium">Colors</label>
+                <Select
+                  isMulti
+                  options={colorOptions}
+                  value={colorOptions.filter((o) => formData.ColorIds.includes(o.value))}
+                  onChange={(opts) => setFormData((p) => ({ ...p, ColorIds: opts ? opts.map((o) => o.value) : [] }))}
+                  styles={selectStyles}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Sizes</label>
+                <Select
+                  isMulti
+                  options={sizeOptions}
+                  value={sizeOptions.filter((o) => formData.SizeIds.includes(o.value))}
+                  onChange={(opts) => setFormData((p) => ({ ...p, SizeIds: opts ? opts.map((o) => o.value) : [] }))}
+                  styles={selectStyles}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="Rating" className="text-sm font-medium">
-                Rating
-              </label>
-              <Input
-                id="Rating"
-                name="Rating"
-                type="number"
-                step="0.1"
-                min="0"
-                max="5"
-                value={formData.Rating}
-                onChange={handleInputChange}
-                placeholder="Enter rating (0-5)"
-                className="w-full"
-              />
+            {/* Price Row */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Price</label>
+                <Input name="Price" type="number" step="0.01" value={formData.Price} onChange={handleInputChange} required />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Discount Price</label>
+                <Input name="DiscountPrice" type="number" step="0.01" value={formData.DiscountPrice} onChange={handleInputChange} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Rating (0-5)</label>
+                <Input name="Rating" type="number" step="0.1" min="0" max="5" value={formData.Rating} onChange={handleInputChange} />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label
-                htmlFor="ProductDetail.Description"
-                className="text-sm font-medium"
+            {/* Description & Material */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Description</label>
+                <Textarea name="ProductDetail.Description" rows={4} value={formData.ProductDetail.Description} onChange={handleInputChange} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Material</label>
+                <Input name="ProductDetail.Material" value={formData.ProductDetail.Material} onChange={handleInputChange} />
+              </div>
+            </div>
+
+            {/* Feature Image */}
+            <div className="space-y-4">
+              <label className="text-sm font-medium">Feature Image (Main)</label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                  isDragging ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-300 dark:border-gray-600"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, true)}
+                onClick={() => document.getElementById("feature-input").click()}
               >
-                Description
-              </label>
-              <Textarea
-                id="ProductDetail.Description"
-                name="ProductDetail.Description"
-                value={formData.ProductDetail.Description}
-                onChange={handleInputChange}
-                placeholder="Enter product description"
-                className="w-full"
-              />
+                <input
+                  id="feature-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleFiles(e.target.files, true)}
+                />
+                {featureImagePreview ? (
+                  <div className="relative inline-block">
+                    <img src={featureImagePreview} alt="Feature" className="mx-auto h-64 object-cover rounded-lg" />
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); removeFeatureImage(); }}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Drop image here or click to upload
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label
-                htmlFor="ProductDetail.Material"
-                className="text-sm font-medium"
+            {/* Additional Images */}
+            <div className="space-y-4">
+              <label className="text-sm font-medium">Additional Images</label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                  isDragging ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-300 dark:border-gray-600"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById("product-images-input").click()}
               >
-                Material
-              </label>
-              <Input
-                id="ProductDetail.Material"
-                name="ProductDetail.Material"
-                value={formData.ProductDetail.Material}
-                onChange={handleInputChange}
-                placeholder="Enter material"
-                className="w-full"
-              />
+                <input
+                  id="product-images-input"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => e.target.files?.length && handleFiles(e.target.files)}
+                />
+                {productImagePreviews.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {productImagePreviews.map((preview, i) => (
+                      <div key={i} className="relative group">
+                        <img src={preview} alt={`Product ${i + 1}`} className="h-32 w-full object-cover rounded-lg" />
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); removeProductImage(i); }}
+                          className="absolute top-1 right-1 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <div className="flex items-center justify-center h-32 border-2 border-dashed rounded-lg">
+                      <Upload className="w-8 h-8 text-gray-400" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Drop images here or click to upload multiple
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="FeatureImage" className="text-sm font-medium">
-                Feature Image
-              </label>
-              <Input
-                id="FeatureImage"
-                name="FeatureImage"
-                type="file"
-                onChange={handleFeatureImageChange}
-                className="w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="ProductImages" className="text-sm font-medium">
-                Product Images
-              </label>
-              <Input
-                id="ProductImages"
-                name="ProductImages"
-                type="file"
-                multiple
-                onChange={handleFileChange}
-                className="w-full"
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <Button type="submit" variant="default">
-                Add Product
+            {/* Submit */}
+            <div className="flex gap-4 pt-6">
+              <Button type="submit" disabled={isLoading} className="min-w-32">
+                {isLoading ? "Creating..." : "Add Product"}
               </Button>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" onClick={() => window.history.back()}>
                 Cancel
               </Button>
             </div>
