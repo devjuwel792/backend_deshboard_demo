@@ -1,9 +1,9 @@
-import Sidebar from "@/Components/common/Sidebar/Sidebar";
-import Toaster from "@/Components/ui/Toaster/Toaster";
+import Sidebar from "@/app/components/common/Sidebar/Sidebar";
+import Toaster from "@/app/components/ui/Toaster/Toaster";
 import ClientProviders from "./ClientProviders";
 import "./globals.css";
-// import Footer from "@/Components/common/Footer/Footer";
-// import Navbar from "@/Components/common/Navbar/Navbar";
+// import Footer from "@/app/components/common/Footer/Footer";
+// import Navbar from "@/app/components/common/Navbar/Navbar";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
