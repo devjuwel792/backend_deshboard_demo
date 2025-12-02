@@ -29,7 +29,7 @@ export default function AddProductPage() {
 
   const [formData, setFormData] = useState({
     Name: "",
-    CategoryIds: [],
+    CategoryId:"",
     Price: "",
     DiscountPrice: "",
     Rating: "",
@@ -164,7 +164,7 @@ export default function AddProductPage() {
       formDataObj.append("ProductDetail.Material", formData.ProductDetail.Material);
       formDataObj.append("ProductDetail.Id", formData.ProductDetail.Id);
 
-      formData.CategoryIds.forEach((id) => formDataObj.append("CategoryIds", id));
+      formData.CategoryId.forEach((id) => formDataObj.append("CategoryId", id));
       formData.SizeIds.forEach((id) => formDataObj.append("SizeIds", id));
       formData.ColorIds.forEach((id) => formDataObj.append("ColorIds", id));
 
@@ -181,7 +181,7 @@ export default function AddProductPage() {
       // Reset everything
       setFormData({
         Name: "",
-        CategoryIds: [],
+        CategoryId: [],
         Price: "",
         DiscountPrice: "",
         Rating: "",
@@ -228,8 +228,8 @@ export default function AddProductPage() {
                 <Select
                   isMulti
                   options={categoryOptions}
-                  value={categoryOptions.filter((o) => formData.CategoryIds.includes(o.value))}
-                  onChange={(opts) => setFormData((p) => ({ ...p, CategoryIds: opts ? opts.map((o) => o.value) : [] }))}
+                  value={categoryOptions.filter((o) => formData.CategoryId.includes(o.value))}
+                  onChange={(opts) => setFormData((p) => ({ ...p, CategoryId: opts ? opts.map((o) => o.value) : [] }))}
                   styles={selectStyles}
                   placeholder="Select..."
                 />

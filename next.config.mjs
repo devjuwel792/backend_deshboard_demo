@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env: {
-        NEXT_PUBLIC_API_URL: 'https://test.skyit.com.bd/api/v1'
+        NEXT_PUBLIC_API_URL: 'https://localhost:7193/api/v1'
     }
 };
 
